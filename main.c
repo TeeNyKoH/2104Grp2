@@ -75,11 +75,18 @@ static volatile uint16_t median;
 static volatile uint16_t WMA = 0;
 static uint16_t i;
 const uint16_t n = 10;
-static uint16_t counter = 0;
+static volatile uint16_t counter = 0;
+static volatile uint16_t thicknessCounter = 0;
+static volatile uint16_t thinCounter = 0;
+static volatile uint16_t thickCounter = 0;
 uint16_t arr[n];
-
+static uint16_t thickDone = 0;
+static uint16_t thinDone = 0;
+static uint16_t isBlack = 1;
 
 static volatile float normalizedADCRes;
+
+void test(void);
 
 int main(void)
 {
@@ -103,7 +110,7 @@ int main(void)
 
     /* Initializing ADC (MCLK/1/4) */
     MAP_ADC14_enableModule();
-    MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1, 0);
+    MAP_ADC14_initModule(ADC_CLOCKSOURCE_SMCLK, ADC_PREDIVIDER_4, ADC_DIVIDER_3, 0);
 
     /* Configuring P1.0 as output */
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
@@ -114,7 +121,7 @@ int main(void)
     /* Configuring ADC Memory */
     MAP_ADC14_configureSingleSampleMode(ADC_MEM0, true);
     MAP_ADC14_configureConversionMemory(ADC_MEM0, ADC_VREFPOS_AVCC_VREFNEG_VSS,
-    ADC_INPUT_A0, false);
+                                        ADC_INPUT_A0, false);
 
     /* Configuring Sample Timer */
     MAP_ADC14_enableSampleTimer(ADC_MANUAL_ITERATION);
@@ -129,57 +136,57 @@ int main(void)
     MAP_Interrupt_enableMaster();
 
     /* Michael's Code */
-    for ( i = 0; i < n; i++ ) {
-        arr[ i ] = 0;
+    for (i = 0; i < n; i++)
+    {
+        arr[i] = 0;
     }
-
 
     while (1)
     {
         MAP_PCM_gotoLPM0();
-        test();
+        //
+        //        printf("%d\n", counter);
+        //        if(counter == 9){
+        //            test();
+        //        }
     }
-
 }
 
-void test(void){
-
-    for (i = 0; i < n; i++ ) {
-       WMA = WMA + (curADCResult * i);
-       WMA = WMA / ((i*(i+1))/2);
-    }
-
-    // set black bg threshold
-    if (WMA >= blackLimit){
-        blackLimit = WMA;
-        // init of white threshold
-        if(whiteLimit == 0){
-            whiteLimit = blackLimit;
-        }
-    }
-
-    // set white bg threshold
-    if (WMA <= whiteLimit){
-        whiteLimit = WMA;
-    }
-
-    // if WMA goes near threshold, consider 1 or 0
-    if (WMA < whiteLimit * 1.2){
-        printf("0\n");
-    }
-
-    if (WMA > blackLimit * 0.8){
-        printf("1\n");
-    }
-
+// void test(void){
+//         for (i = 0; i < n; i++ ) {
+//                WMA = WMA + (arr[i] * i);
+//                WMA = WMA / ((i*(i+1))/2);
+//             }
+//
+//             // set black bg threshold
+//             if (WMA >= blackLimit){
+//                 blackLimit = WMA;
+//                 // init of white threshold
+//                 if(whiteLimit == 0){
+//                     whiteLimit = blackLimit;
+//                 }
+//             }
+//
+//             // set white bg threshold
+//             if (WMA <= whiteLimit){
+//                 whiteLimit = WMA;
+//             }
+//             printf("%d\n",WMA);
+//             printf("%d\n", WMA);
+//  if WMA goes near threshold, consider 1 or 0
+//    if (WMA < whiteLimit * 1.2){
+//        printf("0\n");
+//    }
+//
+//    if (WMA > blackLimit * 0.8){
+//        printf("1\n");
+//    }
 
 //        printf("%d\n",blackLimit);
 //        printf("%d\n\n",whiteLimit);
 //        printf("%d\n",WMA);
 
-
-}
-
+//}
 
 /* ADC Interrupt Handler. This handler is called whenever there is a conversion that is finished for ADC_MEM0. */
 void ADC14_IRQHandler(void)
@@ -192,24 +199,99 @@ void ADC14_IRQHandler(void)
         curADCResult = MAP_ADC14_getResult(ADC_MEM0);
 
         arr[counter] = curADCResult;
-        counter++;
+        counter = counter + 1;
 
         /* If white is detected, turn on P1.0 */
-        if(curADCResult < 1000){
+        if (curADCResult < 1000)
+        {
             GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
-
         }
-        else{
+        else
+        {
             GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
         }
 
-        if(counter == n){
-            counter = 0;
+        if (counter == n)
+        {
+            for (i = 0; i < n; i++)
+            {
+                WMA = WMA + (arr[i] * i);
+                WMA = WMA / ((i * (i + 1)) / 2);
+            }
+
+            // set black bg threshold
+            if (WMA >= blackLimit)
+            {
+                blackLimit = WMA;
+                // init of white threshold
+                if (whiteLimit == 0)
+                {
+                    whiteLimit = blackLimit;
+                }
+            }
+
+            // set white bg threshold
+            if (WMA <= whiteLimit)
+            {
+                whiteLimit = WMA;
+            }
+
+            if (whiteLimit != blackLimit)
+            {
+                thicknessCounter++;
+
+                if (WMA > blackLimit * 0.8)
+                {
+
+                    if (thicknessCounter == thickCounter & !isBlack)
+                    {
+                        // output 1 into black string
+                        thicknessCounter = 0;
+                    }
+                    else if (thicknessCounter == thinCounter & !isBlack)
+                    {
+                        // output 0 into black string
+                        thicknessCounter = 0;
+                    }
+
+                    if (!thinDone)
+                    {
+                        thinCounter++;
+                    }
+                    else
+                    {
+                        thickDone = 1;
+                    }
+                }
+
+                if (WMA < whiteLimit * 1.2)
+                {
+
+                    if (thicknessCounter == thickCounter & isBlack)
+                    {
+                        // output 1 into white string
+                        thicknessCounter = 0;
+                    }
+                    else if (thicknessCounter == thinCounter !isBlack)
+                    {
+                        // output 0 into white string
+                        thicknessCounter = 0;
+                    }
+
+                    if (!thickDone)
+                    {
+                        thickCounter++;
+                    }
+                    else
+                    {
+                        thinDone = 1;
+                    }
+                }
+            }
         }
         normalizedADCRes = (curADCResult * 3.3) / 16384;
-//        printf("%d\n",curADCResult);
+        //        printf("%d\n",curADCResult);
 
         MAP_ADC14_toggleConversionTrigger();
     }
 }
-
