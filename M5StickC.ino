@@ -5,10 +5,10 @@
 
 #define MSG_BUFFER_SIZE 50
 
-//Change this!
-const char* ssid        = "test";
-const char* password    = "test";
-const char* mqtt_server = "192.168.1.1";
+
+const char* ssid        = "SINGTEL-4A7C";
+const char* password    = "eiyoacaivo";
+const char* mqtt_server = "192.168.1.118";
 const int port = 1883;
 
 const char* topic       = "car";
@@ -61,25 +61,17 @@ void reconnect(){
 
 //I2C event handler
 void receiveEvent(int count){
-  M5.Lcd.println("Receive event");
-  //client.beginPublish(topic, MSG_BUFFER_SIZE, false);
+  uint8_t *tmp = (uint8_t *) malloc(count);
+  memset(tmp, '\0', count);
   int i = 0;
-  uint8_t msg[50];
-  memset(msg, '\0', 50);
   while(1 < Wire.available()) // loop through all but the last
   {
     char c = Wire.read(); // receive byte as a character
-    //M5.Lcd.print(c);         // print the character
-    //client.write(c);
-    msg[i] = (uint8_t)c;
+    tmp[i] = (uint8_t)c;
     ++i;
   }
-  client.publish(topic, msg, 50, false);
-  //client.endPublish();
-}
-
-void requestEvent(){
-  M5.Lcd.println("Request event");
+  free(tmp);
+  client.publish(topic, tmp, count, false);
 }
 
 void setup() {
@@ -96,12 +88,10 @@ void setup() {
   //Initialize the I2C as slave with address 0x55
   Wire.begin(0x55, 32, 33, 100000);
   Wire.onReceive(receiveEvent);
-  Wire.onRequest(requestEvent);
   M5.Lcd.println("Setup complete!");
 }
 
 void loop() {
-
   if (!client.connected()) {
     reconnect();
   }
