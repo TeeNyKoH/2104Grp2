@@ -18,7 +18,7 @@ int main() {
     gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
     gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
     // Make the I2C pins available to picotool
-    bi_decl(bi_2pins_with_func(1, 2, GPIO_FUNC_I2C));
+    bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
     
     char pico_ad[50] = "Raspberry Pi Pico\0";
     while(1){
