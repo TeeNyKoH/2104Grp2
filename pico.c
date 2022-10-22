@@ -34,4 +34,5 @@ void send(char* msg, int length){
   }
   tmp[length] = '\0';
   i2c_write_blocking(i2c_default, addr, tmp, length + 1, false);
+  free(tmp);
 }
