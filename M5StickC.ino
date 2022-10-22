@@ -14,10 +14,6 @@ const char* topic       = "car";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-unsigned long lastMsg = 0;
-char msg[MSG_BUFFER_SIZE];
-int value = 0;
-
 void wifiSetup(){
   delay(10);
 
