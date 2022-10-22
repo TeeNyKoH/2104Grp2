@@ -3,8 +3,6 @@
 #include <PubSubClient.h>
 #include <Wire.h>
 
-#define MSG_BUFFER_SIZE 50
-
 //Change this later!
 const char* ssid        = "test";
 const char* password    = "test";
