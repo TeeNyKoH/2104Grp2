@@ -68,8 +68,8 @@ void receiveEvent(int count){
     tmp[i] = (uint8_t)c;
     ++i;
   }
-  free(tmp);
   client.publish(topic, tmp, count, false);
+  free(tmp);
 }
 
 void setup() {
