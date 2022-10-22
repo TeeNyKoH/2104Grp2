@@ -5,10 +5,10 @@
 
 #define MSG_BUFFER_SIZE 50
 
-
-const char* ssid        = "SINGTEL-4A7C";
-const char* password    = "eiyoacaivo";
-const char* mqtt_server = "192.168.1.118";
+//Change this later!
+const char* ssid        = "test";
+const char* password    = "test";
+const char* mqtt_server = "192.168.1.1";
 const int port = 1883;
 
 const char* topic       = "car";
