@@ -62,42 +62,46 @@ int main() {
 
     uint trigPin1 = 0;
     uint echoPin1 = 1;
-    uint trigPin2 = 2;
-    uint echoPin2 = 3;
-    uint trigPin3 = 4;
-    uint echoPin3 = 5;
+    // uint trigPin2 = 14;
+    uint echoPin2 = 15;
+    // uint trigPin3 = 17;
+    uint echoPin3 = 16;
     setupUltrasonicPins(trigPin1, echoPin1); //front
-    setupUltrasonicPins(trigPin2, echoPin2); //left
-    setupUltrasonicPins(trigPin3, echoPin3); //right
+    setupUltrasonicPins(trigPin1, echoPin2); //left
+    setupUltrasonicPins(trigPin1, echoPin3); //right
 
 
-    float front,avgfront,avgleft,avgright,diff,left,right; 
+    float front,avgfront = 0,avgleft = 0,avgright = 0,left,right; 
 
     while(1){
         front = getCm(trigPin1, echoPin1);
-        left = getCm(trigPin2, echoPin2);
-        right = getCm(trigPin3, echoPin3);
+        left = getCm(trigPin1, echoPin2);
+        right = getCm(trigPin1, echoPin3);
         
-        for (int i = 1; i < 50; ++i)
+        int count = 1;
+        int i = 0;
+        for (int i = 0; i < 50; ++i)
             {
-            avgfront = avgfront + avgfront;
-            avgleft = avgleft + avgleft;
-            avgright = avgright + avgright;
+            avgfront = front + avgfront;
+            avgleft = left + avgleft;
+            avgright = right + avgright;
         
             
             }
-        avgfront = avgfront/49;
-        avgleft = avgleft/49;
-        avgright = avgright/49;
+        avgfront = (avgfront/50) + 2.5;
+        avgleft = (avgleft/50) + 2.5;
+        avgright = (avgright/50) + 2.5;
+
+        
 
         printf("\n %.2f cm of front",getCm(trigPin1, echoPin1));
-        printf("\n %.2f cm of left",getCm(trigPin2, echoPin2));
-        printf("\n %.2f cm of right",getCm(trigPin3, echoPin3));
-        sleep_ms(40);
-        printf("\n %.2f cm avg",avgfront);
-        printf("\n %.2f cm avg",avgleft);
-        printf("\n %.2f cm avg",avgright);
-        if (avgfront < 9.5)
+        printf("\n %.2f cm of left",getCm(trigPin1, echoPin2));
+        printf("\n %.2f cm of right",getCm(trigPin1, echoPin3));
+        
+        printf("\n %.2f cm front avg",avgfront);
+        printf("\n %.2f cm left avg",avgleft);
+        printf("\n %.2f cm right avg",avgright);
+        if (avgfront < 5.5)
         {
             printf("\n Front Blocked/Detected");
         }
@@ -107,22 +111,34 @@ int main() {
         }
 
 
-        if (avgleft < 3)
+        if (avgleft < 5.5)
         {
-            printf("\n Left Blocked/Detected");
+            printf("\n Left Blocked");
+            
         }
         else
         {
             printf("\n Left Clear");
         }
 
-        if (avgright < 3)
+        if (avgright < 5.5)
         {
-            printf("\n Right Blocked/Detected");
+            printf("\n Right Blocked");
         }
         else
         {
             printf("\n Right Clear");
         }
+
+        if (avgleft > avgright)
+        {
+            printf("\n car slanted left");
+        }
+
+        if (avgright > avgleft)
+        {
+            printf("\n car slanted right");
+        }
+        sleep_ms(40);
 }
 }
