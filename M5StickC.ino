@@ -9,10 +9,15 @@ const char* password    = "test";
 const char* mqtt_server = "192.168.1.1";
 const int port = 1883;
 
+
 const char* topic       = "car";
+const char* sendTopic   = "send";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
+uint8_t* msgReceived;
+bool thereIsAMessage = false;
 
 void wifiSetup(){
   delay(10);
@@ -68,6 +73,24 @@ void receiveEvent(int count){
   free(tmp);
 }
 
+void callback(const char[] topic, byte* payload, unsigned int length){
+  if(thereIsAMessage == false){
+    msgReceived = (uint8_t *) malloc(length);
+    for(int i = 0; i < length; i++){
+      msgReceived[i] = (uint8_t) payload[i];
+    }
+    thereIsAMessage = true;
+  }
+}
+
+void requestEvent() {
+  if(thereIsAMessage == true){
+    Wire.write(msgReceived, length);
+    free(msgReceived);
+    thereIsAMessage = false;
+  }
+}
+
 void setup() {
   //Initialize the M5
   M5.begin();
@@ -78,6 +101,8 @@ void setup() {
   //Initialize MQTT
   M5.Lcd.println("ICT2104 Car");
   client.setServer(mqtt_server, port);
+  client.subscribe(sendTopic);
+  client.setCallback(callback);
 
   //Initialize the I2C as slave with address 0x55
   Wire.begin(0x55, 32, 33, 100000);
