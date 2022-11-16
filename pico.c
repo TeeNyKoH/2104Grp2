@@ -8,6 +8,9 @@
 
 static int addr = 0x55;
 
+uint8_t msgHeader[4] = {0x23, 0x60, 0x71, 0x95};
+uint8_t recvHeader[4] = {0x00, 0x00, 0x00, 0x00};
+
 void i2cprintf(const char* fmt, ...);
 void receive();
 uint8_t recvLength[1];
@@ -43,16 +46,40 @@ void i2cprintf(const char* fmt, ...){
 }
 
 void receive(){
-  // Get the length of the message
-  i2c_read_blocking(i2c_default, addr, recvLength, 1, false);  
-  if(recvLength[0] == '\0')
-    return;
-  uint8_t* buf = (uint8_t*) malloc(recvLength[0]);
-  
-  // Read the actual message
-  i2c_read_blocking(i2c_default, addr, buf, recvLength[0], false);
-  for(int i = 0; i < recvLength[0]; i++){
-    printf("%c", buf[i]);
+  /*repeat:
+  do {
+    i2c_read_blocking(i2c_default, addr, recvLength, 1, true);  
   }
-  free(buf);
+  while(recvLength[0] != 0x95);
+  
+  i2c_read_blocking(i2c_default, addr, recvHeader, 4, false);    
+  if(strncmp(recvHeader, msgHeader, 4) != 0){
+    goto repeat;
+  }*/
+  
+  // Get the amount of messages
+  i2c_read_blocking(i2c_default, addr, recvLength, 1, false);  
+  int msgAmount = recvLength[0];
+  printf("msgAmount: %d\n", msgAmount);
+  
+  if(msgAmount == 0){
+    return;
+  } else {
+    for(int i = 0; i < msgAmount; i++){     
+      // Get message length
+      i2c_read_blocking(i2c_default, addr, recvLength, 1, false);
+      printf("recvLength: %d\n", recvLength[0]);
+      
+      uint8_t* buf = (uint8_t*) malloc(recvLength[0]);
+      
+      // Read the actual message
+      i2c_read_blocking(i2c_default, addr, buf, recvLength[0], false);
+      
+      for(int i = 0; i < recvLength[0]; i++){
+        printf("%c", buf[i]);
+      }
+      
+      free(buf);
+    }
+  }
 }
