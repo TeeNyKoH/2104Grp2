@@ -26,6 +26,7 @@ target_link_libraries(${PROJECT_NAME}
     hardware_gpio
     hardware_timer 
     hardware_uart
+    hardware_i2c
 
 )
 
