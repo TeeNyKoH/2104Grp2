@@ -3,8 +3,8 @@
 #include <PubSubClient.h>
 #include <Wire.h>
 
-const char* ssid        = "SINGTEL-4A7C";
-const char* password    = "eiyoacaivo";
+const char* ssid        = "";
+const char* password    = "";
 const char* mqtt_server = "192.168.1.118";
 const int port          = 1883;
 
@@ -14,11 +14,41 @@ const char* picoTopic   = "car";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-uint8_t* msgReceived;
-uint8_t msgLength;
-bool thereIsAMessage = false;
+typedef struct node{
+  uint8_t msgLength;
+  uint8_t* message;
+  struct node *next;
+} NODE;
 
+uint8_t msgHeader[4] = {0x23, 0x60, 0x71, 0x95};
+uint8_t* msgReceived;
+uint8_t msgCount = 0;
+uint8_t i2cLength[1] = {0};
 bool i2c_tick_tock = false;
+bool do_once_request = false;
+NODE *queueHead = NULL;
+NODE *queueTail = NULL;
+
+void enqueue(uint8_t len, uint8_t* msg){
+  NODE *new_node = (NODE*)malloc(sizeof(NODE));
+  
+  if(new_node == NULL) {
+    return;
+  }
+
+  new_node->msgLength = len;
+  new_node->message = msg;
+  new_node->next = NULL;
+
+  if(queueHead == NULL) {
+    queueHead = new_node;
+    queueTail = new_node;
+  } else {
+    queueTail->next = new_node;
+    queueTail = new_node;
+  }
+  ++msgCount;
+}
 
 void wifiSetup(){
   delay(10);
@@ -78,32 +108,49 @@ void receiveEvent(int count){
 void callback(char* topic, byte* payload, unsigned int length){
   if(strncmp(topic, recvTopic, 4) == 0){
     msgReceived = (uint8_t *) malloc(length);
-    memcpy(msgReceived, payload, length);
-    thereIsAMessage = true;
-    msgLength = length;
-    for(int i = 0; i < length; i++){
-      M5.Lcd.print((char)msgReceived[i]);
-    }
-    M5.Lcd.println('\0');
+    memcpy(msgReceived, payload, (int)length);
+    enqueue(length, msgReceived);
+    //for(int i = 0; i < length; i++){
+      //M5.Lcd.print((char)msgReceived[i]);
+    //}
+    //M5.Lcd.println('\0');
   }
 }
 
-// I2C requests data
-void requestEvent() {
-  if(thereIsAMessage == true){
-    // Indicate the length of the message (max 255)
+void requestEvent(){
+  uint8_t init[1] = {0x95};
+
+  if(do_once_request == false){
+    //Wire.write(init, 1);
+    //Wire.write(msgHeader, 4);
+    Wire.write(msgCount);
+    if(queueHead != NULL)
+      do_once_request = true;
+    return;
+  }
+
+  if(queueHead != NULL){  
     if(i2c_tick_tock == false){
-      Wire.write(msgLength);
+      Wire.write(queueHead->msgLength);
       i2c_tick_tock = true;
+      return;
     } else {
       // Send the actual message
-      Wire.write(msgReceived, msgLength);
+      Wire.write(queueHead->message, queueHead->msgLength);
       i2c_tick_tock = false;
-      thereIsAMessage = false;
+      if(queueHead == queueTail){
+        free(queueHead);
+        queueHead = NULL;
+        queueTail = NULL;
+        msgCount = 0;
+        do_once_request = false;
+      } else {
+        NODE *tmp = queueHead;
+        queueHead = queueHead->next;
+        free(tmp);
+      }
+      return;
     }
-  } else {
-    // No message
-    Wire.write('\0');
   }
 }
 
