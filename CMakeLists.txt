@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}
     encoder.c
     ultrasonic.c
     accelorometer.c
+    movenment.c
 )
 
 # Create map/bin/hex/uf2 files

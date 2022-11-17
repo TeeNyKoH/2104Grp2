@@ -98,11 +98,8 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
         ultrasonic_Avg_Left = ultrasonic_Left + ultrasonic_Avg_Left;
         ultrasonic_Avg_Right = ultrasonic_Right + ultrasonic_Avg_Right;
         // printf("%.2dcount\n",j);
-        if (j == 50)
-        {
-            j = 0;
-        }
     }
+    j = 0;
 
     /* Hardcoded addition as sensors give a set wrong value */
     ultrasonic_Avg_Front = (ultrasonic_Avg_Front / 50);
@@ -169,54 +166,54 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
 
     
     // setting profiles to move car 
-    if(front_block = 0 && left_block = 0 && right_block = 0 ){
+    if(front_block == 0 && left_block == 0 && right_block == 0 ){
         moveCarForward(11,12,13);
     }
     
 
-    if(front_block = 1 && left_block = 0 && right_block = 0 ){
+    if(front_block == 1 && left_block == 0 && right_block == 0 ){
         turnLeft90(11,12,13);
         
     }
 
-    if(front_block = 1 && left_block = 1 && right_block = 0 ){
+    if(front_block == 1 && left_block == 1 && right_block == 0 ){
         turnRight90(11,12,13);
         
     }
     
 
-    if(front_block = 1 && left_block = 0 && right_block = 1 ){
+    if(front_block == 1 && left_block == 0 && right_block == 1 ){
         turnLeft90(11,12,13);
         
     }
 
-    if(front_block = 1 && left_block = 1 && right_block = 1 ){
+    if(front_block == 1 && left_block == 1 && right_block == 1 ){
         reverseCar(11,12,13);
         turnLeft90(11,12,13);
         turnLeft90(11,12,13);
         
     }
 
-    if(front_block = 0 && left_block = 1 && right_block = 0 ){
+    if(front_block == 0 && left_block == 1 && right_block == 0 ){
         moveCarForward(11,12,13);
         
     }
 
-    if(front_block = 0 && left_block = 0 && right_block = 1 ){
+    if(front_block == 0 && left_block == 0 && right_block == 1 ){
         moveCarForward(11,12,13);
         
     }
 
-    if(front_block = 0 && left_block = 1 && right_block = 1 ){
+    if(front_block == 0 && left_block == 1 && right_block == 1 ){
         moveCarForward(11,12,13);
         
     }
 
-    if(centerCar = 1){
+    if(centerCar == 1){
         slightTurnRight(11,12,13);
     }
     else{
         slightTurnLeft(11,12,13);
     }
     
-
+}
