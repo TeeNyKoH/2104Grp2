@@ -91,6 +91,13 @@ void reconnect(){
 
 // Received data from I2C
 void receiveEvent(int count){
+  //For latency test
+  if(Wire.peek() == 0x8F){
+    Wire.read();
+    Wire.write(0x8F);
+    return;
+  }
+  
   uint8_t *tmp = (uint8_t *) malloc(count);
   memset(tmp, '\0', count);
   int i = 0;
@@ -110,16 +117,14 @@ void callback(char* topic, byte* payload, unsigned int length){
     msgReceived = (uint8_t *) malloc(length);
     memcpy(msgReceived, payload, (int)length);
     enqueue(length, msgReceived);
-    //for(int i = 0; i < length; i++){
-      //M5.Lcd.print((char)msgReceived[i]);
-    //}
-    //M5.Lcd.println('\0');
+    for(int i = 0; i < length; i++){
+      M5.Lcd.print((char)msgReceived[i]);
+    }
+    M5.Lcd.println('\0');
   }
 }
 
 void requestEvent(){
-  uint8_t init[1] = {0x95};
-
   if(do_once_request == false){
     //Wire.write(init, 1);
     //Wire.write(msgHeader, 4);
@@ -154,6 +159,13 @@ void requestEvent(){
   }
 }
 
+void serialEvent(){
+  if(Serial2.peek() == 0x8F){
+    Serial2.read();
+    Serial2.write(0x8F);
+  }
+}
+
 void setup() {
   //Initialize the M5
   M5.begin();
@@ -170,6 +182,11 @@ void setup() {
   Wire.begin(0x55, 32, 33, 100000);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
+
+  //Initialize UART for analysis
+  //No parity, 1 stop bit
+  Serial2.begin(115200, SERIAL_8N1, 25, 26);
+  Serial2.flush();
   M5.Lcd.println("Setup complete!");
 }
 
