@@ -27,6 +27,7 @@
 
 float ultrasonic_Front = 0, ultrasonic_Avg_Front = 0, ultrasonic_Avg_Left = 0, ultrasonic_Avg_Right = 0, ultrasonic_Left = 0, ultrasonic_Right = 0;
 int j = 0;
+
 int left_block = 0, front_block = 0, right_block = 0, centerCar = 0, HumpStatus = 0;
 /* Set up for ultrasonic Pins */
 void setupUltrasonicPins(int trigPin, int echoPin)
@@ -117,52 +118,105 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
     printf("%.2f cm right avg\n", ultrasonic_Avg_Right);
 
     // /* Variables to be given to mapping */
-    if (ultrasonic_Avg_Front < 12 && ultrasonic_Avg_Front != 0)
+    
+
+    //setting  front left and right to check if blocked
+    if(ultrasonic_Avg_Front < 5.5 && ultrasonic_Avg_Front !=0)
     {
-        printf("Front Blocked/Detected\n");
         front_block = 1;
-        stopCar(11,12,13);
     }
     else
     {
-        printf("Front Clear\n");
         front_block = 0;
-        moveCarForward(11,12,13);
     }
 
-    if (ultrasonic_Left < 5.5)
+    if(ultrasonic_Avg_Left < 5.5 && ultrasonic_Avg_Left !=0)
     {
-        printf("Left Blocked\n");
         left_block = 1;
     }
     else
     {
-        printf("Left Clear\n");
         left_block = 0;
     }
-
-    if (ultrasonic_Right < 5.5)
+    
+    if(ultrasonic_Avg_Right < 5.5 && ultrasonic_Avg_Right !=0)
     {
-        printf("Right Blocked\n");
         right_block = 1;
     }
     else
     {
-        printf("Right Clear\n");
         right_block = 0;
     }
 
-    if (ultrasonic_Left > ultrasonic_Right)
+    if(ultrasonic_Avg_Front < 5.5 && ultrasonic_Avg_Front !=0)
+    {
+        front_block = 1;
+    }
+    else
+    {
+        front_block = 0;
+    }
+    
+    if (ultrasonic_Avg_Left > ultrasonic_Avg_Right)
     {
         printf("car slanted left\n");
         centerCar = 1;
     }
-
-    if (ultrasonic_Right > ultrasonic_Left)
-    {
+    else{
         printf("car slanted right\n");
-        centerCar = 1;
+        centerCar = 0;
     }
 
-    // uncomment end
-}
+    
+    // setting profiles to move car 
+    if(front_block = 0 && left_block = 0 && right_block = 0 ){
+        moveCarForward(11,12,13);
+    }
+    
+
+    if(front_block = 1 && left_block = 0 && right_block = 0 ){
+        turnLeft90(11,12,13);
+        
+    }
+
+    if(front_block = 1 && left_block = 1 && right_block = 0 ){
+        turnRight90(11,12,13);
+        
+    }
+    
+
+    if(front_block = 1 && left_block = 0 && right_block = 1 ){
+        turnLeft90(11,12,13);
+        
+    }
+
+    if(front_block = 1 && left_block = 1 && right_block = 1 ){
+        reverseCar(11,12,13);
+        turnLeft90(11,12,13);
+        turnLeft90(11,12,13);
+        
+    }
+
+    if(front_block = 0 && left_block = 1 && right_block = 0 ){
+        moveCarForward(11,12,13);
+        
+    }
+
+    if(front_block = 0 && left_block = 0 && right_block = 1 ){
+        moveCarForward(11,12,13);
+        
+    }
+
+    if(front_block = 0 && left_block = 1 && right_block = 1 ){
+        moveCarForward(11,12,13);
+        
+    }
+
+    if(centerCar = 1){
+        slightTurnRight(11,12,13);
+    }
+    else{
+        slightTurnLeft(11,12,13);
+    }
+    
+
