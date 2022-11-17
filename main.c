@@ -1,297 +1,103 @@
-/*
- * -------------------------------------------
- *    MSP432 DriverLib - v3_21_00_05
- * -------------------------------------------
- *
- * --COPYRIGHT--,BSD,BSD
- * Copyright (c) 2016, Texas Instruments Incorporated
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * *  Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * *  Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * *  Neither the name of Texas Instruments Incorporated nor the names of
- *    its contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * --/COPYRIGHT--*/
-/*******************************************************************************
- * MSP432 ADC14 - Single Channel Sample Repeat
- *
- * Description: This code example will demonstrate the basic functionality of
- * of the DriverLib ADC APIs with sampling a single channel repeatedly. Each
- * time the ADC conversion occurs, the result is stored into a local variable.
- * The sample timer is used to continuously grab a new value from the ADC
- * module using a manual iteration that is performed in the ADC ISR. A
- * normalized ADC value with respect to the 3.3v Avcc is also calculated using
- * the FPU.
- *
- *                MSP432P401
- *             ------------------
- *         /|\|                  |
- *          | |                  |
- *          --|RST         P5.5  |<--- A0 (Analog Input)
- *            |                  |
- *            |                  |
- *            |                  |
- *            |                  |
- *            |                  |
- *
- * Author: Timothy Logan
- ******************************************************************************/
-/* DriverLib Includes */
-#include "driverlib.h"
+#include "pico/stdlib.h"
 
-/* Standard Includes */
-#include <stdint.h>
+#include "hardware/gpio.h"
+#include "hardware/timer.h"
+#include "hardware/irq.h"
+#include "hardware/adc.h"
 
-#include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <stdio.h>
 
-/* Statics */
-static volatile uint16_t curADCResult;
-static volatile uint16_t whiteLimit;
-static volatile uint16_t blackLimit;
-static volatile uint16_t median;
+#include "main.h"
+#include "barcode.h"
+#include "decode.h"
+#include "encoder.h"
 
-static volatile uint16_t WMA = 0;
-static uint16_t i;
-const uint16_t n = 10;
-static volatile uint16_t counter = 0;
-static volatile uint16_t thicknessCounter = 0;
-static volatile uint16_t thinCounter = 0;
-static volatile uint16_t thickCounter = 0;
-uint16_t arr[n];
-static uint16_t thickDone = 0;
-static uint16_t thinDone = 0;
-static uint16_t isBlack = 1;
-
-static volatile float normalizedADCRes;
-
-void test(void);
-
-int main(void)
+static void wheel_encoder(unsigned gpio, unsigned int _)
 {
-    /* Halting the Watchdog  */
-    MAP_WDT_A_holdTimer();
-
-    /* Initializing Variables */
-    curADCResult = 0;
-
-    /* Setting Flash wait state */
-    MAP_FlashCtl_setWaitState(FLASH_BANK0, 2);
-    MAP_FlashCtl_setWaitState(FLASH_BANK1, 2);
-
-    /* Setting DCO to 48MHz  */
-    MAP_PCM_setPowerState(PCM_AM_LDO_VCORE1);
-    MAP_CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_48);
-
-    /* Enabling the FPU for floating point operation */
-    MAP_FPU_enableModule();
-    MAP_FPU_enableLazyStacking();
-
-    /* Initializing ADC (MCLK/1/4) */
-    MAP_ADC14_enableModule();
-    MAP_ADC14_initModule(ADC_CLOCKSOURCE_SMCLK, ADC_PREDIVIDER_4, ADC_DIVIDER_3, 0);
-
-    /* Configuring P1.0 as output */
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
-
-    /* Configuring GPIOs (5.5 A0) */
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5, GPIO_PIN5, GPIO_TERTIARY_MODULE_FUNCTION);
-
-    /* Configuring ADC Memory */
-    MAP_ADC14_configureSingleSampleMode(ADC_MEM0, true);
-    MAP_ADC14_configureConversionMemory(ADC_MEM0, ADC_VREFPOS_AVCC_VREFNEG_VSS,
-                                        ADC_INPUT_A0, false);
-
-    /* Configuring Sample Timer */
-    MAP_ADC14_enableSampleTimer(ADC_MANUAL_ITERATION);
-
-    /* Enabling/Toggling Conversion */
-    MAP_ADC14_enableConversion();
-    MAP_ADC14_toggleConversionTrigger();
-
-    /* Enabling interrupts */
-    MAP_ADC14_enableInterrupt(ADC_INT0);
-    MAP_Interrupt_enableInterrupt(INT_ADC14);
-    MAP_Interrupt_enableMaster();
-
-    /* Michael's Code */
-    for (i = 0; i < n; i++)
+    if (gpio == 17)
     {
-        arr[i] = 0;
+        wheelRotation1++; // right wheel
+        wheelDistance1 = wheelRotation1 * 3.3 * PI;
     }
+    if (gpio == 14)
+    {
+        wheelRotation2++;                           // left wheel
+        wheelDistance2 = wheelRotation2 * 3.3 * PI; // d = 6.6cm, distance = notches * 6.6pi / 20
+    }
+
+    if (wheelRotation1 == 1 && wheelRotation2 == 1)
+    {
+        startTime = time_us_32(); // start timer once wheel start moving
+    }
+
+    if (wheelRotation1 % 20 == 0)
+    {
+        stopTime1 = time_us_32();
+        wheelTime1 = (stopTime1 - startTime) / 1000000; // time for 1 rotation in seconds
+
+        done1 = 1;
+    }
+    if (wheelRotation2 % 20 == 0)
+    {
+        stopTime2 = time_us_32();
+        wheelTime2 = (stopTime2 - startTime) / 1000000; // time for 1 rotation in seconds
+
+        done2 = 1;
+    }
+
+    if (done1 && done2)
+    {
+
+        totalDistance = ((wheelDistance2 + wheelDistance1) / 2.0);
+        rotationDistance = ((wheelDistance2 + wheelDistance1) / 2.0);
+
+        totalSpeed = (rotationDistance / ((wheelTime1 + wheelTime2) / 2.0));
+
+        // printf("distance 1: %.2f | distance 2: %.2f | total distance: %.f cm\n", wheelDistance1, wheelDistance2, totalDistance);
+        // printf("time1: %d | time2: %d | total speed: %.2f cm/s \n", wheelTime1, wheelTime2, totalSpeed);
+        rotationDistance = 0.0f;
+        done1 = 0;
+        done2 = 0;
+    }
+    irq_clear(PIO0_IRQ_0);
+}
+
+int main()
+{
+    stdio_init_all();
+    sleep_ms(1000);
+
+    // pin 14 & 17 for wheel 1 and wheel 2
+    gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &wheel_encoder);
+    gpio_set_irq_enabled(14, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+
+    adc_init();
+    // Make sure GPIO is high-impedance, no pullups etc
+    adc_gpio_init(26);
+
+    // Select ADC input 0 (GPIO26)
+    adc_select_input(0);
+
+    adc_fifo_setup(
+        true,  // Write each completed conversion to the sample FIFO
+        false, // Enable DMA data request (DREQ)
+        1,     // DREQ (and IRQ) asserted when at least 1 sample present
+        false, // We won't see the ERR bit because of 8 bit reads; disable.
+        false  // Shift each sample to 8 bits when pushing to FIFO
+    );
+    adc_set_clkdiv(0);
+    adc_irq_set_enabled(true);
+
+    irq_clear(ADC_IRQ_FIFO);
+    irq_set_exclusive_handler(ADC_IRQ_FIFO, barcode_interrupt);
+    irq_set_enabled(ADC_IRQ_FIFO, true);
+
+    adc_run(true);
 
     while (1)
     {
-        MAP_PCM_gotoLPM0();
-        //
-        //        printf("%d\n", counter);
-        //        if(counter == 9){
-        //            test();
-        //        }
-    }
-}
-
-// void test(void){
-//         for (i = 0; i < n; i++ ) {
-//                WMA = WMA + (arr[i] * i);
-//                WMA = WMA / ((i*(i+1))/2);
-//             }
-//
-//             // set black bg threshold
-//             if (WMA >= blackLimit){
-//                 blackLimit = WMA;
-//                 // init of white threshold
-//                 if(whiteLimit == 0){
-//                     whiteLimit = blackLimit;
-//                 }
-//             }
-//
-//             // set white bg threshold
-//             if (WMA <= whiteLimit){
-//                 whiteLimit = WMA;
-//             }
-//             printf("%d\n",WMA);
-//             printf("%d\n", WMA);
-//  if WMA goes near threshold, consider 1 or 0
-//    if (WMA < whiteLimit * 1.2){
-//        printf("0\n");
-//    }
-//
-//    if (WMA > blackLimit * 0.8){
-//        printf("1\n");
-//    }
-
-//        printf("%d\n",blackLimit);
-//        printf("%d\n\n",whiteLimit);
-//        printf("%d\n",WMA);
-
-//}
-
-/* ADC Interrupt Handler. This handler is called whenever there is a conversion that is finished for ADC_MEM0. */
-void ADC14_IRQHandler(void)
-{
-    uint64_t status = MAP_ADC14_getEnabledInterruptStatus();
-    MAP_ADC14_clearInterruptFlag(status);
-
-    if (ADC_INT0 & status)
-    {
-        curADCResult = MAP_ADC14_getResult(ADC_MEM0);
-
-        arr[counter] = curADCResult;
-        counter = counter + 1;
-
-        /* If white is detected, turn on P1.0 */
-        if (curADCResult < 1000)
-        {
-            GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
-        }
-        else
-        {
-            GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
-        }
-
-        if (counter == n)
-        {
-            for (i = 0; i < n; i++)
-            {
-                WMA = WMA + (arr[i] * i);
-                WMA = WMA / ((i * (i + 1)) / 2);
-            }
-
-            // set black bg threshold
-            if (WMA >= blackLimit)
-            {
-                blackLimit = WMA;
-                // init of white threshold
-                if (whiteLimit == 0)
-                {
-                    whiteLimit = blackLimit;
-                }
-            }
-
-            // set white bg threshold
-            if (WMA <= whiteLimit)
-            {
-                whiteLimit = WMA;
-            }
-
-            if (whiteLimit != blackLimit)
-            {
-                thicknessCounter++;
-
-                if (WMA > blackLimit * 0.8)
-                {
-
-                    if (thicknessCounter == thickCounter & !isBlack)
-                    {
-                        // output 1 into black string
-                        thicknessCounter = 0;
-                    }
-                    else if (thicknessCounter == thinCounter & !isBlack)
-                    {
-                        // output 0 into black string
-                        thicknessCounter = 0;
-                    }
-
-                    if (!thinDone)
-                    {
-                        thinCounter++;
-                    }
-                    else
-                    {
-                        thickDone = 1;
-                    }
-                }
-
-                if (WMA < whiteLimit * 1.2)
-                {
-
-                    if (thicknessCounter == thickCounter & isBlack)
-                    {
-                        // output 1 into white string
-                        thicknessCounter = 0;
-                    }
-                    else if (thicknessCounter == thinCounter !isBlack)
-                    {
-                        // output 0 into white string
-                        thicknessCounter = 0;
-                    }
-
-                    if (!thickDone)
-                    {
-                        thickCounter++;
-                    }
-                    else
-                    {
-                        thinDone = 1;
-                    }
-                }
-            }
-        }
-        normalizedADCRes = (curADCResult * 3.3) / 16384;
-        //        printf("%d\n",curADCResult);
-
-        MAP_ADC14_toggleConversionTrigger();
     }
 }
