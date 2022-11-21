@@ -108,7 +108,7 @@ void get_barcode(int reading)
         tempOutput = decode_barcode(bars, spaces);
         // printf("tempoutput %s\n", tempOutput);
         strcat(barcodeOutput, tempOutput);
-        printf("%s\n", barcodeOutput);
+        // printf("%s\n", barcodeOutput);
 
         memset(bars, 0, 5);
         memset(spaces, 0, 4);
@@ -118,6 +118,13 @@ void get_barcode(int reading)
         blackOffset = 0;
         whiteOffset = 1;
     }
+}
+
+void resetAllVariables()
+{
+    blackOffset = 1;
+    whiteOffset = 2;
+    result, totalResult, startTime, interruptCounter, avg, avgs, blackCounter, whiteCounter, interruptCounter, j, sum, currentTime, limitCheck, isBlack = 0;
 }
 
 void barcode_interrupt()
@@ -139,6 +146,12 @@ void barcode_interrupt()
             }
             get_barcode(avg);
             // printf("black %d  white %d\n",blackLimit,whiteLimit);
+
+            if (strlen(barcodeOutput) == 3)
+            {
+                printf("%s\n", barcodeOutput);
+                resetAllVariables();
+            }
 
             // reset
             totalResult = 0;
