@@ -29,6 +29,11 @@ float ultrasonic_Front = 0, ultrasonic_Avg_Front = 0, ultrasonic_Avg_Left = 0, u
 int j = 0;
 
 int left_block = 0, front_block = 0, right_block = 0, centerCar = 0, HumpStatus = 0;
+
+float front_offset = 3.0;
+float left_offset = 3.1;
+float right_offset = 2.5;
+
 /* Set up for ultrasonic Pins */
 void setupUltrasonicPins(int trigPin, int echoPin)
 {
@@ -102,23 +107,22 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
     j = 0;
 
     /* Hardcoded addition as sensors give a set wrong value */
-    ultrasonic_Avg_Front = (ultrasonic_Avg_Front / 50);
-    ultrasonic_Avg_Left = (ultrasonic_Avg_Left / 50);
-    ultrasonic_Avg_Right = (ultrasonic_Avg_Right / 50);
+    ultrasonic_Avg_Front = (ultrasonic_Avg_Front / 50) + front_offset;
+    ultrasonic_Avg_Left = (ultrasonic_Avg_Left / 50) + left_offset;
+    ultrasonic_Avg_Right = (ultrasonic_Avg_Right / 50) + right_offset;
 
-    printf("%.2f cm of front\n", getCm(trigPin, echoPin1));
-    printf("%.2f cm of left\n", getCm(trigPin, echoPin2));
-    printf("%.2f cm of right\n", getCm(trigPin, echoPin3));
+    // printf("%.2f cm of front\n", getCm(trigPin, echoPin1));
+    // printf("%.2f cm of left\n", getCm(trigPin, echoPin2));
+    // printf("%.2f cm of right\n", getCm(trigPin, echoPin3));
 
     printf("%.2f cm front avg\n", ultrasonic_Avg_Front);
     printf("%.2f cm left avg\n", ultrasonic_Avg_Left);
     printf("%.2f cm right avg\n", ultrasonic_Avg_Right);
 
     // /* Variables to be given to mapping */
-    
 
-    //setting  front left and right to check if blocked
-    if(ultrasonic_Avg_Front < 5.5 && ultrasonic_Avg_Front !=0)
+    // setting  front left and right to check if blocked
+    if (ultrasonic_Avg_Front < 5.5 + front_offset && ultrasonic_Avg_Front != front_offset)
     {
         front_block = 1;
     }
@@ -127,7 +131,7 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
         front_block = 0;
     }
 
-    if(ultrasonic_Avg_Left < 5.5 && ultrasonic_Avg_Left !=0)
+    if (ultrasonic_Avg_Left < 5.5 + left_offset && ultrasonic_Avg_Left != left_offset)
     {
         left_block = 1;
     }
@@ -135,8 +139,8 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
     {
         left_block = 0;
     }
-    
-    if(ultrasonic_Avg_Right < 5.5 && ultrasonic_Avg_Right !=0)
+
+    if (ultrasonic_Avg_Right < 5.5 + right_offset && ultrasonic_Avg_Right != right_offset)
     {
         right_block = 1;
     }
@@ -145,7 +149,7 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
         right_block = 0;
     }
 
-    if(ultrasonic_Avg_Front < 5.5 && ultrasonic_Avg_Front !=0)
+    if (ultrasonic_Avg_Front < 5.5 + front_offset && ultrasonic_Avg_Front != front_offset)
     {
         front_block = 1;
     }
@@ -153,67 +157,85 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
     {
         front_block = 0;
     }
-    
+
     if (ultrasonic_Avg_Left > ultrasonic_Avg_Right)
     {
-        printf("car slanted left\n");
+        // printf("car slanted left\n");
         centerCar = 1;
     }
-    else{
-        printf("car slanted right\n");
+    else
+    {
+        // printf("car slanted right\n");
         centerCar = 0;
     }
+    // moveCarForward(7,8,9);
+    // moveCarForward(11,12,13);
+    // setting profiles to move car
+    // if(front_block == 0 && left_block == 0 && right_block == 0 ){
+    //     moveCarForward(11,12,13);
+    // }
 
-    
-    // setting profiles to move car 
-    if(front_block == 0 && left_block == 0 && right_block == 0 ){
-        moveCarForward(11,12,13);
-    }
-    
+    // if(front_block == 1 && left_block == 0 && right_block == 0 ){
+    //     turnLeft90(11,12,13);
 
-    if(front_block == 1 && left_block == 0 && right_block == 0 ){
-        turnLeft90(11,12,13);
-        
-    }
+    // }
 
-    if(front_block == 1 && left_block == 1 && right_block == 0 ){
-        turnRight90(11,12,13);
-        
-    }
-    
+    // if(front_block == 1 && left_block == 1 && right_block == 0 ){
+    //     turnRight90(11,12,13);
 
-    if(front_block == 1 && left_block == 0 && right_block == 1 ){
-        turnLeft90(11,12,13);
-        
-    }
+    // }
 
-    if(front_block == 1 && left_block == 1 && right_block == 1 ){
-        reverseCar(11,12,13);
-        turnLeft90(11,12,13);
-        turnLeft90(11,12,13);
-        
-    }
+    // if(front_block == 1 && left_block == 0 && right_block == 1 ){
+    //     turnLeft90(11,12,13);
 
-    if(front_block == 0 && left_block == 1 && right_block == 0 ){
-        moveCarForward(11,12,13);
-        
-    }
+    // }
 
-    if(front_block == 0 && left_block == 0 && right_block == 1 ){
-        moveCarForward(11,12,13);
-        
-    }
+    // if(front_block == 1 && left_block == 1 && right_block == 1 ){
+    //     reverseCar(11,12,13);
+    //     // turnLeft90(11,12,13);
+    //     // turnLeft90(11,12,13);
 
-    if(front_block == 0 && left_block == 1 && right_block == 1 ){
-        moveCarForward(11,12,13);
-        
-    }
+    // }
 
-    if(centerCar == 1){
-        slightTurnRight(11,12,13);
-    }
-    else{
-        slightTurnLeft(11,12,13);
-    }
-    
+    // if(front_block == 0 && left_block == 1 && right_block == 0 ){
+    //     moveCarForward(11,12,13);
+
+    // }
+
+    // if(front_block == 0 && left_block == 0 && right_block == 1 ){
+    //     moveCarForward(11,12,13);
+
+    // }
+
+    // if(front_block == 0 && left_block == 1 && right_block == 1 ){
+    //     moveCarForward(11,12,13);
+
+    // }
+
+    // if(centerCar == 1){
+    //     slightTurnRight(11,12,13);
+    // }
+    // else{
+    //     slightTurnLeft(11,12,13);
+    // }
+}
+
+int is_front_block()
+{
+    return front_block;
+}
+
+int is_left_block()
+{
+    return left_block;
+}
+
+int is_right_block()
+{
+    return left_block;
+}
+
+int is_center()
+{
+    return centerCar;
 }

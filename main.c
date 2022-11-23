@@ -14,6 +14,7 @@
 #include <stdio.h>
 
 #include "main.h"
+#include "movement.h"
 #include "ultrasonic.h"
 #include "accelorometer.h"
 #include "barcode.h"
@@ -77,13 +78,86 @@ bool repeating_timer_callback(struct repeating_timer *t)
     return true;
 }
 
+bool perpetual_move(struct repeating_timer *t)
+{
+    // setting profiles to move car 
+    if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 0 ){
+        moveCarForward(7,8,9);        
+    }
+    
+
+    if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 0 ){
+        turnLeft90(7,8,9);
+
+    }
+
+    if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 0 ){
+        turnRight90(7,8,9);
+        
+    }
+    
+
+    if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 1 ){
+        turnLeft90(7,8,9);
+        
+    }
+
+    if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 1 ){
+        reverseCar(7,8,9);
+        // turnLeft90(7,8,9);
+        // turnLeft90(7,8,9);
+        
+    }
+
+    if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 0 ){
+        moveCarForward(7,8,9);
+        
+    }
+
+    if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 1 ){
+        moveCarForward(7,8,9);
+        
+    }
+
+    if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 1 ){
+        moveCarForward(7,8,9);
+        
+    }
+
+    if(is_center() == 1){
+        slightTurnRight(7,8,9);
+
+    }
+    else{
+        slightTurnLeft(7,8,9);
+
+    }
+
+    return true;
+}
+
 int main(){
     stdio_init_all();
     sleep_ms(1000);
+    
+    //movement
+    gpio_init(11);
+    gpio_init(12);
+    gpio_init(13);
 
+    gpio_set_dir(11, GPIO_OUT);
+    gpio_set_dir(12, GPIO_OUT);
+    gpio_set_dir(13, GPIO_OUT);
+
+    gpio_put(11,0);
+    gpio_put(12,0);
+    gpio_put(13,0);
+
+    //encoder
     gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &wheel_encoder);
     gpio_set_irq_enabled(14, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);    
-
+    
+    //barcode
     adc_init();
     // Make sure GPIO is high-impedance, no pullups etc
     adc_gpio_init(26);
@@ -106,8 +180,8 @@ int main(){
     irq_set_enabled(ADC_IRQ_FIFO, true);
 
     adc_run(true);
-
-    // need to check if i2c is defined
+ 
+    // accelo + ultra - need to check if i2c is defined
 #if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
     #warning i2c/mpu6050_i2c example requires a board with I2C pins
     puts("Default I2C pins were not defined");
@@ -117,9 +191,12 @@ int main(){
     setupUltrasonicPins(trigPin, echoPin2); //left
     setupUltrasonicPins(trigPin, echoPin3); //right
     struct repeating_timer timer;
+    struct repeating_timer timer1;
+
     getAcelloDectection();
     
-    add_repeating_timer_ms(50, repeating_timer_callback, NULL, &timer);
+    add_repeating_timer_ms(200, repeating_timer_callback, NULL, &timer);
+    add_repeating_timer_ms(1000,perpetual_move,NULL, &timer1);
     while (1) {
         //tight_loop_contents();
         sleep_ms(40);
