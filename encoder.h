@@ -6,11 +6,11 @@
 int wheelRotation1, wheelRotation2, wheelTime1, wheelTime2;
 float wheelDistance1, wheelDistance2;
 int done1, done2;
-int startTime, stopTime1, stopTime2;
-double totalSpeed, totalDistance, rotationDistance;
+int startTime, stopTime1, stopTime2, currentTime;
+double avgSpeed, totalDistance, tempDistance, currentDistance;
 
-double getDistance();
-double getSpeed();
+double get_total_distance();
+double get_average_speed();
 // static void wheel_encoder(unsigned int,unsigned int);
 
 #endif

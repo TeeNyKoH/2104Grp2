@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "decode.h"
-#include "main.h"
 
 char Arr_Characters[NUMBER_OF_STRING][MAX_STRING_SIZE] = {
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "E",
@@ -134,7 +133,7 @@ char* decode_barcode(char bars[], char spaces[])
     }
 
     // get array item
-    // printf("\n\nCharacter Value = %s\n", Arr_Characters[finalvalue]);
+    printf("\n\nCharacter Value = %s\n", Arr_Characters[finalvalue]);
     // strcat(output, Arr_Characters[finalvalue]);
     return Arr_Characters[finalvalue];
 }

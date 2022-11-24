@@ -125,6 +125,7 @@ void resetAllVariables()
     blackOffset = 1;
     whiteOffset = 2;
     result, totalResult, startTime, interruptCounter, avg, avgs, blackCounter, whiteCounter, interruptCounter, j, sum, currentTime, limitCheck, isBlack = 0;
+    memset(barcodeOutput, 0, 3);
 }
 
 void barcode_interrupt()
@@ -134,6 +135,8 @@ void barcode_interrupt()
         result = adc_fifo_get();
         totalResult += result;
         interruptCounter++;
+
+        // printf("%d\n",result);
 
         if (interruptCounter == 8333)
         {
