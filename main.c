@@ -20,46 +20,52 @@
 #include "barcode.h"
 #include "decode.h"
 #include "encoder.h"
-
+#include "motor.h"
 
 int trigPin = 0;
 int echoPin1 = 1;
 int echoPin2 = 15;
 int echoPin3 = 16;
 
-static void wheel_encoder(unsigned gpio, unsigned int _) {
-    if (gpio == 17) {
+static void wheel_encoder(unsigned gpio, unsigned int _)
+{
+    if (gpio == 17)
+    {
         wheelRotation1++; // right wheel
         wheelDistance1 = wheelRotation1 * 3.3 * PI;
-
     }
-    if (gpio == 14) {
-        wheelRotation2++; // left wheel
+    if (gpio == 14)
+    {
+        wheelRotation2++;                           // left wheel
         wheelDistance2 = wheelRotation2 * 3.3 * PI; // d = 6.6cm, distance = notches * 6.6pi / 20
     }
 
-    if (wheelRotation1 == 1 && wheelRotation2 == 1) {
-        startTime = time_us_32();               // start timer once wheel start moving 
+    if (wheelRotation1 == 1 && wheelRotation2 == 1)
+    {
+        startTime = time_us_32(); // start timer once wheel start moving
     }
 
-    if (wheelRotation1 % 20 == 0) {
+    if (wheelRotation1 % 20 == 0)
+    {
         stopTime1 = time_us_32();
-        wheelTime1 = (stopTime1 - startTime) / 1000000;     // time for 1 rotation in seconds
+        wheelTime1 = (stopTime1 - startTime) / 1000000; // time for 1 rotation in seconds
 
         done1 = 1;
     }
-    if (wheelRotation2 % 20 == 0) {
+    if (wheelRotation2 % 20 == 0)
+    {
         stopTime2 = time_us_32();
-        wheelTime2 = (stopTime2 - startTime) / 1000000;     // time for 1 rotation in seconds
+        wheelTime2 = (stopTime2 - startTime) / 1000000; // time for 1 rotation in seconds
 
         done2 = 1;
     }
 
-    if (done1 && done2) {
+    if (done1 && done2)
+    {
 
         totalDistance = ((wheelDistance2 + wheelDistance1) / 2.0);
         rotationDistance = ((wheelDistance2 + wheelDistance1) / 2.0);
-        
+
         totalSpeed = (rotationDistance / ((wheelTime1 + wheelTime2) / 2.0));
 
         // printf("distance 1: %.2f | distance 2: %.2f | total distance: %.f cm\n", wheelDistance1, wheelDistance2, totalDistance);
@@ -80,67 +86,67 @@ bool repeating_timer_callback(struct repeating_timer *t)
 
 bool perpetual_move(struct repeating_timer *t)
 {
-    // setting profiles to move car 
-    if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 0 ){
-        moveCarForward(7,8,9);        
-    }
-    
+    // setting profiles to move car
+    // if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 0 ){
+    //     moveCarForward(13,12,11);
 
-    if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 0 ){
-        turnLeft90(7,8,9);
+    // }
 
-    }
+    // else if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 0 ){
+    //     turnLeft90(13,12,11);
 
-    if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 0 ){
-        turnRight90(7,8,9);
-        
-    }
-    
+    // }
 
-    if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 1 ){
-        turnLeft90(7,8,9);
-        
-    }
+    // else if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 0 ){
+    //     turnRight90(13,12,11);
 
-    if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 1 ){
-        reverseCar(7,8,9);
-        // turnLeft90(7,8,9);
-        // turnLeft90(7,8,9);
-        
-    }
+    // }
 
-    if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 0 ){
-        moveCarForward(7,8,9);
-        
-    }
+    // else if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 1 ){
+    //     turnLeft90(13,12,11);
 
-    if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 1 ){
-        moveCarForward(7,8,9);
-        
-    }
+    // }
 
-    if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 1 ){
-        moveCarForward(7,8,9);
-        
-    }
+    // else if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 1 ){
+    //     reverseCar(13,12,11);
+    //     // turnLeft90(13,12,11);
+    //     // turnLeft90(13,12,11);
 
-    if(is_center() == 1){
-        slightTurnRight(7,8,9);
+    // }
 
-    }
-    else{
-        slightTurnLeft(7,8,9);
+    // else if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 0 ){
+    //     moveCarForward(13,12,11);
 
-    }
+    // }
 
+    // else if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 1 ){
+    //     moveCarForward(13,12,11);
+
+    // }
+
+    // else if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 1 ){
+    //     moveCarForward(13,12,11);
+
+    // }
+
+    // if (is_front_block() == 0)
+    // {
+    //     moveCarForward(13,12,11);
+    // }
+    // else{
+    //     stopCar(13,12,11);`  ``
+    // }
+
+    moveCarForward(11,12,13);
     return true;
 }
 
-int main(){
+int main()
+{
     stdio_init_all();
     sleep_ms(1000);
-    
-    //movement
+
+    // movement
     gpio_init(11);
     gpio_init(12);
     gpio_init(13);
@@ -149,15 +155,17 @@ int main(){
     gpio_set_dir(12, GPIO_OUT);
     gpio_set_dir(13, GPIO_OUT);
 
-    gpio_put(11,0);
-    gpio_put(12,0);
-    gpio_put(13,0);
+    gpio_put(11, 0);
+    gpio_put(12, 0);
+    gpio_put(13, 0);
 
-    //encoder
+    // encoder
     gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &wheel_encoder);
-    gpio_set_irq_enabled(14, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);    
-    
-    //barcode
+    gpio_set_irq_enabled(14, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
+
+    initialize_motor();
+
+    // barcode
     adc_init();
     // Make sure GPIO is high-impedance, no pullups etc
     adc_gpio_init(26);
@@ -180,27 +188,28 @@ int main(){
     irq_set_enabled(ADC_IRQ_FIFO, true);
 
     adc_run(true);
- 
+
     // accelo + ultra - need to check if i2c is defined
 #if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
-    #warning i2c/mpu6050_i2c example requires a board with I2C pins
+#warning i2c/mpu6050_i2c example requires a board with I2C pins
     puts("Default I2C pins were not defined");
 #else
     sleep_ms(1000);
-    setupUltrasonicPins(trigPin, echoPin1); //front
-    setupUltrasonicPins(trigPin, echoPin2); //left
-    setupUltrasonicPins(trigPin, echoPin3); //right
+    setupUltrasonicPins(trigPin, echoPin1); // front
+    setupUltrasonicPins(trigPin, echoPin2); // left
+    setupUltrasonicPins(trigPin, echoPin3); // right
     struct repeating_timer timer;
     struct repeating_timer timer1;
 
     getAcelloDectection();
-    
+
     add_repeating_timer_ms(200, repeating_timer_callback, NULL, &timer);
-    add_repeating_timer_ms(1000,perpetual_move,NULL, &timer1);
-    while (1) {
-        //tight_loop_contents();
+    add_repeating_timer_ms(1000, perpetual_move, NULL, &timer1);
+    while (1)
+    {
+        // tight_loop_contents();
         sleep_ms(40);
     }
-     
-    #endif
+
+#endif
 }
