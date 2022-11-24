@@ -9,7 +9,7 @@
 #include "barcode.h"
 
 int result, totalResult, startTime, interruptCounter, avg, avgs, blackCounter, whiteCounter, interruptCounter, j, sum, currentTime, limitCheck, isBlack = 0;
-int whiteLimit = 400, blackLimit = 3300;
+int whiteLimit = 1600, blackLimit = 3000;
 int blackOffset = 1, whiteOffset = 2;
 
 int set_limits(int reading)
@@ -38,7 +38,7 @@ int set_limits(int reading)
 
 void get_barcode(int reading)
 {
-    if (reading > blackLimit && !isBlack)
+    if (reading > whiteLimit && !isBlack)
     {
         currentTime = time_us_32() - startTime;
         startTime = time_us_32();
@@ -138,9 +138,9 @@ void barcode_interrupt()
 
         // printf("%d\n",result);
 
-        if (interruptCounter == 8333)
+        if (interruptCounter == 200)
         {
-            avg = totalResult / 8333;
+            avg = totalResult / 200;
             // printf("%d\n",avg);
 
             if (startTime == 0)
