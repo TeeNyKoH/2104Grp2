@@ -4,6 +4,16 @@
 extern int trigPin;
 extern int gpin0, gpin1, gpin2;
 
-void forward_car();
-void initialize_motor();
+void initializeMotor();
+void forwardCar();
+void stopCar();
+void stopLeft();
+void stopRight();
+void turnLeft90();
+void turnLeft180();
+void turnRight90();
+void reverseCar();
+void slightTurnLeft();
+void slightTurnRight();
+
 #endif

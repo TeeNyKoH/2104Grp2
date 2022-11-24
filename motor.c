@@ -17,14 +17,10 @@
 #include <string.h>
 #include <stdio.h>
 
-#define TIMER_PERIOD 256
+int leftnotch;
+int rightnotch;
 
-void forward_car()
-{
-
-}
-
-void initialize_motor()
+void initializeMotor()
 {
     printf("init\n");
     gpio_init(6);
@@ -37,10 +33,10 @@ void initialize_motor()
     gpio_set_dir(10, GPIO_OUT);
     gpio_set_dir(11, GPIO_OUT);
 
-    gpio_put(6, 1);
+    gpio_put(6, 0);
     gpio_put(7, 0);
     gpio_put(10, 0);    
-    gpio_put(11, 1);
+    gpio_put(11, 0);
 
     // Tell GPIO 0 and 1 they are allocated to the PWM
     gpio_set_function(8, GPIO_FUNC_PWM);
@@ -58,5 +54,147 @@ void initialize_motor()
     // Set the PWM running
     pwm_set_enabled(slice_num, true);
     /// \end::setup_pwm[]
+}
 
+void forwardCar()
+{
+    gpio_put(6, 1);
+    gpio_put(7, 0);
+    gpio_put(10, 0);    
+    gpio_put(11, 1);
+}
+
+void stopCar()
+{
+    gpio_put(6, 0);
+    gpio_put(7, 0);
+    gpio_put(10, 0);    
+    gpio_put(11, 0);
+}
+
+void stopLeft()
+{
+    gpio_put(6, 0);
+    gpio_put(7, 0);
+}
+
+void stopRight()
+{
+    gpio_put(10, 0);    
+    gpio_put(11, 0);
+}
+
+void turnLeft90()
+{
+    gpio_put(6, 1);
+    gpio_put(7, 0);
+    gpio_put(10, 1);    
+    gpio_put(11, 0);
+    while(1)
+    {
+        if(rightnotch == 8)
+        {
+            stopRight();
+            rightnotch = 0;
+        }
+        if(leftnotch == 9)
+        {
+            stopLeft();
+            leftnotch = 0;
+        }
+    }
+}
+
+void turnLeft180()
+{
+    gpio_put(6, 1);
+    gpio_put(7, 0);
+    gpio_put(10, 1);    
+    gpio_put(11, 0);
+    while(1)
+    {
+        if(rightnotch == 18)
+        {
+            stopRight();
+            rightnotch = 0;
+        }
+        if(leftnotch == 20)
+        {
+            stopLeft();
+            leftnotch = 0;
+        }
+    }
+}
+void turnRight90()
+{
+    gpio_put(6, 0);
+    gpio_put(7, 1);
+    gpio_put(10, 0);    
+    gpio_put(11, 1);
+    while(1)
+    {
+        if(rightnotch == 8)
+        {
+            stopRight();
+            rightnotch = 0;
+        }
+        if(leftnotch == 9)
+        {
+            stopLeft();
+            leftnotch = 0;
+        }
+    }
+}
+
+void reverseCar()
+{
+    gpio_put(6, 0);
+    gpio_put(7, 1);
+    gpio_put(10, 1);    
+    gpio_put(11, 0);
+
+    while(1)
+    {
+        if(rightnotch >=8 && leftnotch >=8)
+         {
+             stopRight();
+             stopLeft();
+             rightnotch = 0;
+             leftnotch = 0;
+             turnLeft180();
+         }
+    }
+}
+
+void slightTurnLeft()
+{
+    gpio_put(6, 1);
+    gpio_put(7, 0);
+    gpio_put(10, 0);    
+    gpio_put(11, 0);
+
+    while(1)
+    {
+        if(rightnotch == 2)
+        {
+            stopRight();
+            rightnotch = 0;
+        }
+    }
+}
+
+void slightTurnRight()
+{
+    gpio_put(6, 0);
+    gpio_put(7, 0);
+    gpio_put(10, 0);    
+    gpio_put(11, 1);
+    while(1)
+    {
+        if(leftnotch == 2)
+        {
+            stopLeft();
+            leftnotch = 0;
+        }
+    }
 }
