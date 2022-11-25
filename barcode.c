@@ -108,7 +108,7 @@ void get_barcode(int reading)
         tempOutput = decode_barcode(bars, spaces);
         // printf("tempoutput %s\n", tempOutput);
         strcat(barcodeOutput, tempOutput);
-        printf("%s\n", barcodeOutput);
+        uartprintf("%s\n", barcodeOutput);
 
         memset(bars, 0, 5);
         memset(spaces, 0, 4);
