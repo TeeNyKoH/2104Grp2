@@ -17,8 +17,10 @@
 #include <string.h>
 #include <stdio.h>
 
-int leftnotch;
-int rightnotch;
+int leftNotch;
+int rightNotch;
+int leftCount;
+int rightCount;
 
 void initializeMotor()
 {
@@ -46,11 +48,11 @@ void initializeMotor()
     uint slice_num = pwm_gpio_to_slice_num(8);
 
     // Set period of 4 cycles (0 to 3 inclusive)
-    pwm_set_wrap(slice_num, 3);
+    pwm_set_wrap(slice_num, 255);
     // Set channel A output high for one cycle before dropping
-    pwm_set_chan_level(slice_num, PWM_CHAN_A, 2);
+    pwm_set_chan_level(slice_num, PWM_CHAN_A, 128);
     // Set initial B output high for three cycles before dropping
-    pwm_set_chan_level(slice_num, PWM_CHAN_B, 2);
+    pwm_set_chan_level(slice_num, PWM_CHAN_B, 128);
     // Set the PWM running
     pwm_set_enabled(slice_num, true);
     /// \end::setup_pwm[]
@@ -92,15 +94,15 @@ void turnLeft90()
     gpio_put(11, 0);
     while(1)
     {
-        if(rightnotch == 8)
+        if(rightNotch == 8)
         {
             stopRight();
-            rightnotch = 0;
+            rightNotch = 0;
         }
-        if(leftnotch == 9)
+        if(leftNotch == 9)
         {
             stopLeft();
-            leftnotch = 0;
+            leftNotch = 0;
         }
     }
 }
@@ -113,15 +115,15 @@ void turnLeft180()
     gpio_put(11, 0);
     while(1)
     {
-        if(rightnotch == 18)
+        if(rightNotch == 18)
         {
             stopRight();
-            rightnotch = 0;
+            rightNotch = 0;
         }
-        if(leftnotch == 20)
+        if(leftNotch == 20)
         {
             stopLeft();
-            leftnotch = 0;
+            leftNotch = 0;
         }
     }
 }
@@ -133,15 +135,15 @@ void turnRight90()
     gpio_put(11, 1);
     while(1)
     {
-        if(rightnotch == 8)
+        if(rightNotch == 8)
         {
             stopRight();
-            rightnotch = 0;
+            rightNotch = 0;
         }
-        if(leftnotch == 9)
+        if(leftNotch == 9)
         {
             stopLeft();
-            leftnotch = 0;
+            leftNotch = 0;
         }
     }
 }
@@ -155,12 +157,12 @@ void reverseCar()
 
     while(1)
     {
-        if(rightnotch >=8 && leftnotch >=8)
+        if(rightNotch >=8 && leftNotch >=8)
          {
              stopRight();
              stopLeft();
-             rightnotch = 0;
-             leftnotch = 0;
+             rightNotch = 0;
+             leftNotch = 0;
              turnLeft180();
          }
     }
@@ -175,10 +177,10 @@ void slightTurnLeft()
 
     while(1)
     {
-        if(rightnotch == 2)
+        if(rightNotch == 2)
         {
             stopRight();
-            rightnotch = 0;
+            rightNotch = 0;
         }
     }
 }
@@ -191,10 +193,161 @@ void slightTurnRight()
     gpio_put(11, 1);
     while(1)
     {
-        if(leftnotch == 2)
+        if(leftNotch == 2)
         {
             stopLeft();
-            leftnotch = 0;
+            leftNotch = 0;
         }
     }
 }
+
+void motorPID()
+{
+    volatile static float pidLeft = 1;
+    volatile static float pidRight = 1;
+    static const float KP = 0.03;
+    static const float KI = 0.006;
+    static const float KD = 0.015;
+    // static const float KP = 0.025;
+    // static const float KD = 0.025;
+    // static const float KI = 0.009;
+    volatile static int16_t prevErrorLeft = 0;
+    volatile static int16_t prevErrorRight = 0;
+    volatile static int16_t sumErrorLeft = 0;
+    volatile static int16_t sumErrorRight = 0;
+    volatile static int16_t target = 8;
+
+    int16_t errorLeft = target - leftCount;
+    int16_t errorRight = target - rightCount;
+
+    pidLeft += (errorLeft * KP) + (prevErrorLeft * KD) + (sumErrorLeft * KI);
+    pidRight += (errorRight * KP) + (prevErrorRight * KD) + (sumErrorRight * KI);
+
+    if(pidLeft >= 1)
+    {
+        pidLeft = 1;
+    }
+    else if(pidLeft <= 0)
+    {
+        pidLeft = 0;
+    }
+    else
+    {
+        pidLeft = pidLeft;
+    }
+
+    if(pidRight >= 1)
+    {
+        pidRight = 1;
+    }
+    else if(pidRight <= 0)
+    {
+        pidRight = 0;
+    }
+    else
+    {
+        pidRight = pidRight;
+    }
+
+    uint16_t left_duty_cycle = 128 * pidLeft;
+    uint16_t right_duty_cycle = 128 * pidRight;
+
+    uint slice_num = pwm_gpio_to_slice_num(8);
+
+    pwm_set_chan_level(slice_num, PWM_CHAN_A, left_duty_cycle);
+    pwm_set_chan_level(slice_num, PWM_CHAN_B, right_duty_cycle);
+    pwm_set_enabled(slice_num, true);
+
+    leftCount = 0;
+    rightCount = 0;
+
+    prevErrorLeft = errorLeft;
+    prevErrorRight = errorRight;
+
+    sumErrorLeft += errorLeft;
+    sumErrorRight += errorRight;
+}
+
+void turnLeft45()
+{
+    gpio_put(6, 1);
+    gpio_put(7, 0);
+    gpio_put(10, 1);    
+    gpio_put(11, 0);
+
+    while(1)
+    {
+        if(rightNotch == 4)
+        {
+            stopRight();
+            rightNotch = 0;
+        }
+        if(leftNotch == 5)
+        {
+            stopLeft();
+            leftNotch = 0;
+        }
+    }
+}
+
+void turnRight45()
+{
+    gpio_put(6, 0);
+    gpio_put(7, 1);
+    gpio_put(10, 0);    
+    gpio_put(11, 1);
+
+    while(1)
+    {
+        if(rightNotch == 4)
+        {
+            stopRight();
+            rightNotch = 0;
+        }
+        if(leftNotch == 5)
+        {
+            stopLeft();
+            leftNotch = 0;
+        }
+    }
+}
+
+void adjustSpeed()
+{
+    if (leftNotch > rightNotch)
+    {
+        slowLeft();
+    }
+    else if (rightNotch > leftNotch)
+    {
+        slowRight();
+    }
+}
+
+void slowLeft()
+{
+    uint16_t leftDC = 128 * 0.95;
+    uint16_t rightDC = 128;
+
+    uint slice_num = pwm_gpio_to_slice_num(8);
+    pwm_set_chan_level(slice_num, PWM_CHAN_A, leftDC);
+    pwm_set_chan_level(slice_num, PWM_CHAN_B, rightDC);
+    pwm_set_enabled(slice_num, true);
+
+}
+
+void slowRight()
+{
+    uint16_t leftDC = 128;
+    uint16_t rightDC = 128 * 0.95;
+
+    uint slice_num = pwm_gpio_to_slice_num(8);
+
+    pwm_set_chan_level(slice_num, PWM_CHAN_A, leftDC);
+    pwm_set_chan_level(slice_num, PWM_CHAN_B, rightDC);
+    pwm_set_enabled(slice_num, true);
+
+}
+
+
+
