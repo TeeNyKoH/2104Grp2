@@ -188,8 +188,9 @@ void destroy_Map(Map *m)
 /* Create a dot format Graph*/
 void print_Map(Map *m)
 {
-    printf("This prints the Edges between each node, which shows the available path from each node.");
-    printf("digraph {\n");
+    uartprintf("This prints the Edges between each node, which shows the available path from each node.");
+	readyPrintf();
+    long_printf("digraph {\n");
 
     for (int from = 0; from < m->vertices; from++)
     {
@@ -197,17 +198,19 @@ void print_Map(Map *m)
         {
             if (m->edges[from][to])
             {
-                printf("%d -> %d\n", from, to);
+                long_printf("%d -> %d\n", from, to);
             }
         }
     }
-    printf("}\n");
+    long_printf("}\n");
+	stopPrintf();
 }
 
 /* This is to print out the edges(available path) in a table format*/
 void print_Edge(Map *m, int row, int columns)
 {
-    printf("\nEdge Map: x represents available route , Blank means either blocked or not mapped.\n\n");
+	readyPrintf();
+    long_printf("\nEdge Map: x represents available route , Blank means either blocked or not mapped.\n\n");
     int nodes = 0;
     int xnode = 1;
     for (int x = 0; x < row; x++)
@@ -218,51 +221,53 @@ void print_Edge(Map *m, int row, int columns)
             {
                 if (m->edges[nodes][nodes + 1])
                 {
-                    printf(" x");
+                    long_printf(" x");
                 }
                 else if (m->edges[nodes + 1][nodes])
                 {
-                    printf(" x");
+                    long_printf(" x");
                 }
                 else
                 {
-                    printf("  ");
+                    long_printf("  ");
                 }
             }
-            printf("%3d", nodes + 1);
+            long_printf("%3d", nodes + 1);
             nodes++;
             xnode++;
         }
-        printf("\n");
+        long_printf("\n");
         for (int z = 0; z < columns; z++)
         {
             if ((z < columns) && (xnode <= row * columns))
             {
                 if (m->edges[xnode - columns][xnode])
                 {
-                    printf(" %4s", " x");
+                    long_printf(" %4s", " x");
                 }
                 else if (m->edges[xnode][xnode - columns])
                 {
-                    printf(" %4s", " x");
+                    long_printf(" %4s", " x");
                 }
                 else
                 {
-                    printf("%5s", " ");
+                    long_printf("%5s", " ");
                 }
             }
             xnode++;
         }
         xnode -= columns;
 
-        printf("\n");
+        long_printf("\n");
     }
+	stopPrintf();
 }
 
 
 void print_Barcode(Map *m, int row, int columns)
 {
-    printf("\nBarcode Map: B represents Barcode in the map.\n\n");
+	readyPrintf();
+    long_printf("\nBarcode Map: B represents Barcode in the map.\n\n");
     int nodes = 0;
     int xnode = 1;
     for (int x = 0; x < row; x++)
@@ -273,50 +278,52 @@ void print_Barcode(Map *m, int row, int columns)
             {
                 if (m->barcode[nodes][nodes + 1])
                 {
-                    printf(" B");
+                    long_printf(" B");
                 }
                 else if (m->barcode[nodes + 1][nodes])
                 {
-                    printf(" B");
+                    long_printf(" B");
                 }
                 else
                 {
-                    printf("  ");
+                    long_printf("  ");
                 }
             }
-            printf("%3d", nodes + 1);
+            long_printf("%3d", nodes + 1);
             nodes++;
             xnode++;
         }
-        printf("\n");
+        long_printf("\n");
         for (int z = 0; z < columns; z++)
         {
             if ((z < columns) && (xnode <= row * columns))
             {
                 if (m->barcode[xnode - columns][xnode])
                 {
-                    printf(" %4s", " B");
+                    long_printf(" %4s", " B");
                 }
                 else if (m->barcode[xnode][xnode - columns])
                 {
-                    printf(" %4s", " B");
+                    long_printf(" %4s", " B");
                 }
                 else
                 {
-                    printf("%5s", "  ");
+                    long_printf("%5s", "  ");
                 }
             }
             xnode++;
         }
         xnode -= columns;
 
-        printf("\n");
+        long_printf("\n");
     }
+	stopPrintf();
 }
 
 void print_Hump(Map *m, int row, int columns)
 {
-    printf("\nHump Map:\n\n");
+	readyPrintf();
+    long_printf("\nHump Map:\n\n");
     int nodes = 0;
     int xnode = 1;
     for (int x = 0; x < row; x++)
@@ -327,50 +334,52 @@ void print_Hump(Map *m, int row, int columns)
             {
                 if (m->hump[nodes][nodes + 1])
                 {
-                    printf(" H");
+                    long_printf(" H");
                 }
                 else if (m->hump[nodes + 1][nodes])
                 {
-                    printf(" H");
+                    long_printf(" H");
                 }
                 else
                 {
-                    printf("  ");
+                    long_printf("  ");
                 }
             }
-            printf("%3d", nodes + 1);
+            long_printf("%3d", nodes + 1);
             nodes++;
             xnode++;
         }
-        printf("\n");
+        long_printf("\n");
         for (int z = 0; z < columns; z++)
         {
             if ((z < columns) && (xnode <= row * columns))
             {
                 if (m->hump[xnode - columns][xnode])
                 {
-                    printf(" %4s", " H");
+                    long_printf(" %4s", " H");
                 }
                 else if (m->hump[xnode][xnode - columns])
                 {
-                    printf(" %4s", " H");
+                    long_printf(" %4s", " H");
                 }
                 else
                 {
-                    printf("%5s", " ");
+                    long_printf("%5s", " ");
                 }
             }
             xnode++;
         }
         xnode -= columns;
 
-        printf("\n");
+        long_printf("\n");
     }
+	stopPrintf();
 }
 
 void print_Path(Map *m, int row, int columns)
 {
-    printf("\nPath Map:\n\n");
+	readyPrintf();
+    long_printf("\nPath Map:\n\n");
     int nodes = 0;
     int xnode = 1;
     for (int x = 0; x < row; x++)
@@ -381,44 +390,45 @@ void print_Path(Map *m, int row, int columns)
             {
                 if (m->path[nodes][nodes + 1])
                 {
-                    printf(" >");
+                    long_printf(" >");
                 }
                 else if (m->path[nodes + 1][nodes])
                 {
-                    printf(" <");
+                    long_printf(" <");
                 }
                 else
                 {
-                    printf("  ");
+                    long_printf("  ");
                 }
             }
-            printf("%3d", nodes + 1);
+            long_printf("%3d", nodes + 1);
             nodes++;
             xnode++;
         }
-        printf("\n");
+        long_printf("\n");
         for (int z = 0; z < columns; z++)
         {
             if ((z < columns) && (xnode <= row * columns))
             {
                 if (m->path[xnode - columns][xnode])
                 {
-                    printf(" %4s", "v");
+                    long_printf(" %4s", "v");
                 }
                 else if (m->path[xnode][xnode - columns])
                 {
-                    printf(" %4s", "^");
+                    long_printf(" %4s", "^");
                 }
                 else
                 {
-                    printf("%5s", " ");
+                    long_printf("%5s", " ");
                 }
             }
             xnode++;
         }
         xnode -= columns;
-        printf("\n");
+        long_printf("\n");
     }
+	stopPrintf();
 }
 
 bool add_Path(Map *m, unsigned int from_node, unsigned int to_node)
@@ -574,6 +584,7 @@ int Find_cost(Map *m, unsigned int from_node, unsigned int to_node)
 bool map_complete(Map *m, int row,
                   int columns)
 { // check if all vertices have at least 1 edge & prints false if not completed
+	readyPrintf();
     int node = 1;
     bool checked = true;
     while (node != (row * columns) + 1)
@@ -586,7 +597,7 @@ bool map_complete(Map *m, int row,
             }
             else
             {
-                printf("Node %d failed\n", node);
+                long_printf("Node %d failed\n", node);
                 checked = false;
                 break;
             }
@@ -599,7 +610,7 @@ bool map_complete(Map *m, int row,
             }
             else
             {
-                printf("Node %d failed\n", node);
+                long_printf("Node %d failed\n", node);
                 checked = false;
                 break;
             }
@@ -625,7 +636,7 @@ bool map_complete(Map *m, int row,
             }
             else
             {
-                printf("Node %d failed\n", node);
+                long_printf("Node %d failed\n", node);
                 checked = false;
                 break;
             }
@@ -638,7 +649,7 @@ bool map_complete(Map *m, int row,
             }
             else
             {
-                printf("Node %d failed\n", node);
+                long_printf("Node %d failed\n", node);
                 checked = false;
                 break;
             }
@@ -651,12 +662,13 @@ bool map_complete(Map *m, int row,
             }
             else
             {
-                printf("Node %d failed\n", node);
+                long_printf("Node %d failed\n", node);
                 checked = false;
                 break;
             }
         }
     }
+	stopPrintf();
     if (checked == false)
     {
         return false;
@@ -750,16 +762,18 @@ void dijkstra(Map *m, int G[MAX][MAX], int n, int startnode, int dest)
     }
 
     // print the path and distance
-    printf("\nCost taken to reach destination %d: %d", dest, distance[dest]);
-    printf("\nPath: %d", dest);
+    uartprintf("\nCost taken to reach destination %d: %d", dest, distance[dest]);
+    uartprintf("\nPath: %d", dest);
 
     j = dest;
+	readyPrintf();
     do
     {
         j = pred[j];
-        printf(" <- %d", j);
+        long_printf(" <- %d", j);
 
     } while (j != startnode);
+	stopPrintf();
     j = dest;
     add_Path(m, pred[j], dest);
 
