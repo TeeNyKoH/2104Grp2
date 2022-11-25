@@ -22,6 +22,16 @@ int rightNotch;
 int leftCount;
 int rightCount;
 
+#define LEFT 'L'
+#define RIGHT 'R'
+#define FORWARD 'F'
+#define REVERSE 'R'
+
+Car car =
+{
+    .state = FORWARD
+};
+
 void initializeMotor()
 {
     printf("init\n");
@@ -64,6 +74,8 @@ void forwardCar()
     gpio_put(7, 0);
     gpio_put(10, 0);    
     gpio_put(11, 1);
+
+    car.state = FORWARD;
 }
 
 void stopCar()
@@ -105,6 +117,8 @@ void turnLeft90()
             leftNotch = 0;
         }
     }
+
+    car.state = LEFT;
 }
 
 void turnLeft180()
@@ -146,6 +160,8 @@ void turnRight90()
             leftNotch = 0;
         }
     }
+
+    car.state = RIGHT;
 }
 
 void reverseCar()
@@ -166,6 +182,8 @@ void reverseCar()
              turnLeft180();
          }
     }
+
+    car.state = REVERSE;
 }
 
 void slightTurnLeft()

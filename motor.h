@@ -9,6 +9,13 @@ extern int rightNotch;
 extern int leftCount;
 extern int rightCount;
 
+typedef struct _Car
+{
+    char state;
+} Car;
+
+extern Car car;
+
 void initializeMotor();
 void forwardCar();
 void stopCar();
@@ -21,5 +28,9 @@ void reverseCar();
 void slightTurnLeft();
 void slightTurnRight();
 void motorPID();
-
+void turnLeft45();
+void turnRihht45();
+void adjustSpeed();
+void slowLeft();
+void slowRight();
 #endif
