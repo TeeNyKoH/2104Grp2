@@ -11,11 +11,6 @@ https://github.com/raspberrypi/pico-sdk/issues/548
 
 #include <stdarg.h>
 #include "pico/stdlib.h"
-#define UART_INSTANCE (uart0)
-#define UART_SPEED 115200
-#define DATA_BIT 8
-#define STOP_BIT 1
-#define PARITY_BIT (UART_PARITY_NONE)
 #define BUFFER_SIZE 128
 #define MAX_LENGTH 1024
 #define EOT 0x04
