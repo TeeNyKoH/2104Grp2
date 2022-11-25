@@ -9,12 +9,12 @@ extern int rightNotch;
 extern int leftCount;
 extern int rightCount;
 
-typedef struct _Car
-{
-    char state;
-} Car;
+#define LEFT 'L'
+#define RIGHT 'R'
+#define FORWARD 'F'
+#define REVERSE 'R'
 
-extern Car car;
+extern int isCarForward;
 
 void initializeMotor();
 void forwardCar();

@@ -1,13 +1,13 @@
 #ifndef movement_h
 #define movement_h
 
-void moveCarForward(unsigned int, unsigned int, unsigned int);
-void stopCar(unsigned int, unsigned int, unsigned int);
-void turnLeft90(unsigned int, unsigned int, unsigned int);
-void turnRight90(unsigned int, unsigned int, unsigned int);
-void reverseCar(unsigned int, unsigned int, unsigned int);
-void slightTurnLeft(unsigned int, unsigned int, unsigned int);
-void slightTurnRight(unsigned int, unsigned int, unsigned int);
+void MSPmoveCarForward(unsigned int, unsigned int, unsigned int);
+void MSPstopCar(unsigned int, unsigned int, unsigned int);
+void MSPturnLeft90(unsigned int, unsigned int, unsigned int);
+void MSPturnRight90(unsigned int, unsigned int, unsigned int);
+void MSPreverseCar(unsigned int, unsigned int, unsigned int);
+void MSPslightTurnLeft(unsigned int, unsigned int, unsigned int);
+void MSPslightTurnRight(unsigned int, unsigned int, unsigned int);
 
 
 #endif

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-void moveCarForward(unsigned int pin0, unsigned int pin1, unsigned int pin2)
+void MSPmoveCarForward(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 {
     gpio_put(pin0, 0);
     gpio_put(pin1, 0);
@@ -26,7 +26,7 @@ void moveCarForward(unsigned int pin0, unsigned int pin1, unsigned int pin2)
     // reset(pin0,pin1,pin2);
 }
 
-void stopCar(unsigned int pin0, unsigned int pin1, unsigned int pin2)
+void MSPstopCar(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 {
     gpio_put(pin0, 0);
     gpio_put(pin1, 1);
@@ -34,7 +34,7 @@ void stopCar(unsigned int pin0, unsigned int pin1, unsigned int pin2)
     printf("stop\n");
 }
 
-void turnLeft90(unsigned int pin0, unsigned int pin1, unsigned int pin2)
+void MSPturnLeft90(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 {
     gpio_put(pin0, 0);
     gpio_put(pin1, 1);
@@ -43,7 +43,7 @@ void turnLeft90(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 
 }
 
-void turnRight90(unsigned int pin0, unsigned int pin1, unsigned int pin2)
+void MSPturnRight90(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 {
     gpio_put(pin0, 1);
     gpio_put(pin1, 0);
@@ -52,7 +52,7 @@ void turnRight90(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 
 }
 
-void reverseCar(unsigned int pin0, unsigned int pin1, unsigned int pin2)
+void MSPreverseCar(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 {
     gpio_put(pin0, 1);
     gpio_put(pin1, 0);
@@ -61,7 +61,7 @@ void reverseCar(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 
 }
 
-void slightTurnLeft(unsigned int pin0, unsigned int pin1, unsigned int pin2)
+void MSPslightTurnLeft(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 {
     gpio_put(pin0, 1);
     gpio_put(pin1, 1);
@@ -69,7 +69,7 @@ void slightTurnLeft(unsigned int pin0, unsigned int pin1, unsigned int pin2)
     printf("slight left\n");
 }
 
-void slightTurnRight(unsigned int pin0, unsigned int pin1, unsigned int pin2)
+void MSPslightTurnRight(unsigned int pin0, unsigned int pin1, unsigned int pin2)
 {
     gpio_put(pin0, 1);
     gpio_put(pin1, 1);
@@ -77,7 +77,7 @@ void slightTurnRight(unsigned int pin0, unsigned int pin1, unsigned int pin2)
     printf("slight right\n");
 }
 
-void reset(unsigned int pin0, unsigned int pin1, unsigned int pin2){
+void MSPreset(unsigned int pin0, unsigned int pin1, unsigned int pin2){
     gpio_put(pin0, 0);
     gpio_put(pin1, 0);
     gpio_put(pin2, 0);

@@ -14,7 +14,6 @@
 #include <stdio.h>
 
 #include "main.h"
-#include "movement.h"
 #include "ultrasonic.h"
 #include "accelorometer.h"
 #include "barcode.h"
@@ -32,11 +31,15 @@ static void wheel_encoder(unsigned gpio, unsigned int _)
     if (gpio == 17)
     {
         wheelRotation1++; // right wheel
+        rightCount++;
+        rightNotch++;
         wheelDistance1 = wheelRotation1 * 3.3 * PI;
     }
     if (gpio == 14)
     {
-        wheelRotation2++;                           // left wheel
+        wheelRotation2++; // left wheel
+        leftNotch++;
+        leftCount++;
         wheelDistance2 = wheelRotation2 * 3.3 * PI; // d = 6.6cm, distance = notches * 6.6pi / 20
     }
 
@@ -137,7 +140,18 @@ bool perpetual_move(struct repeating_timer *t)
     //     stopCar(13,12,11);`  ``
     // }
 
-    moveCarForward(11,12,13);
+    // forwardCar();
+    return true;
+}
+
+bool motor_pid(struct repeating_timer *t)
+{
+
+    if (isCarForward)
+    {
+        printf("car state = forward\n");
+        motorPID();
+    }
     return true;
 }
 
@@ -147,23 +161,24 @@ int main()
     sleep_ms(1000);
 
     // movement
-    gpio_init(11);
-    gpio_init(12);
-    gpio_init(13);
+    // gpio_init(11);
+    // gpio_init(12);
+    // gpio_init(13);
 
-    gpio_set_dir(11, GPIO_OUT);
-    gpio_set_dir(12, GPIO_OUT);
-    gpio_set_dir(13, GPIO_OUT);
+    // gpio_set_dir(11, GPIO_OUT);
+    // gpio_set_dir(12, GPIO_OUT);
+    // gpio_set_dir(13, GPIO_OUT);
 
-    gpio_put(11, 0);
-    gpio_put(12, 0);
-    gpio_put(13, 0);
+    // gpio_put(11, 0);
+    // gpio_put(12, 0);
+    // gpio_put(13, 0);
 
     // encoder
     gpio_set_irq_enabled_with_callback(17, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &wheel_encoder);
     gpio_set_irq_enabled(14, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
 
-    initialize_motor();
+    initializeMotor();
+    turnLeft90();
 
     // barcode
     adc_init();
@@ -200,11 +215,14 @@ int main()
     setupUltrasonicPins(trigPin, echoPin3); // right
     struct repeating_timer timer;
     struct repeating_timer timer1;
+    struct repeating_timer timer2;
 
     getAcelloDectection();
 
     add_repeating_timer_ms(200, repeating_timer_callback, NULL, &timer);
     add_repeating_timer_ms(1000, perpetual_move, NULL, &timer1);
+    add_repeating_timer_ms(250, motor_pid, NULL, &timer2);
+
     while (1)
     {
         // tight_loop_contents();

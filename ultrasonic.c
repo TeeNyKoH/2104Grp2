@@ -30,9 +30,9 @@ int j = 0;
 
 int left_block = 0, front_block = 0, right_block = 0, centerCar = 0, HumpStatus = 0;
 
-float front_offset = 3.0;
-float left_offset = 3.1;
-float right_offset = 2.5;
+float front_offset = 0.5;
+float left_offset = -1;
+float right_offset = 0.3;
 
 /* Set up for ultrasonic Pins */
 void setupUltrasonicPins(int trigPin, int echoPin)
@@ -115,9 +115,9 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
     // printf("%.2f cm of left\n", getCm(trigPin, echoPin2));
     // printf("%.2f cm of right\n", getCm(trigPin, echoPin3));
 
-    // printf("%.2f cm front avg\n", ultrasonic_Avg_Front);
-    // printf("%.2f cm left avg\n", ultrasonic_Avg_Left);
-    // printf("%.2f cm right avg\n", ultrasonic_Avg_Right);
+    printf("%.2f cm front avg\n", ultrasonic_Avg_Front);
+    printf("%.2f cm left avg\n", ultrasonic_Avg_Left);
+    printf("%.2f cm right avg\n", ultrasonic_Avg_Right);
 
     // /* Variables to be given to mapping */
     // setting  front left and right to check if blocked
