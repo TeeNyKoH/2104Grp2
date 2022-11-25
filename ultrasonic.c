@@ -121,7 +121,7 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
 
     // /* Variables to be given to mapping */
     // setting  front left and right to check if blocked
-    if (ultrasonic_Avg_Front < 5.5 + front_offset && ultrasonic_Avg_Front != front_offset)
+    if (ultrasonic_Avg_Front < 20 + front_offset && ultrasonic_Avg_Front != front_offset)
     {
         front_block = 1;
     }

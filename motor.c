@@ -11,7 +11,6 @@
 
 #include "motor.h"
 
-
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -22,6 +21,14 @@ int rightNotch;
 int leftCount;
 int rightCount;
 
+// 0 = stop
+// 1 = forward
+// 2 = left
+// 3 = right
+// 4 = left180
+// 5 = reverse
+// 6 = slightLeft
+// 7 = slightRight
 int isCarForward = 0;
 
 void initializeMotor()
@@ -76,18 +83,23 @@ void stopCar()
     gpio_put(7, 0);
     gpio_put(10, 0);    
     gpio_put(11, 0);
+    isCarForward = 0;
 }
 
 void stopLeft()
 {
     gpio_put(6, 0);
     gpio_put(7, 0);
+    isCarForward = 0;
+
 }
 
 void stopRight()
 {
     gpio_put(10, 0);    
     gpio_put(11, 0);
+    isCarForward = 0;
+
 }
 
 void turnLeft90()
@@ -96,23 +108,7 @@ void turnLeft90()
     gpio_put(7, 0);
     gpio_put(10, 1);    
     gpio_put(11, 0);
-    while(1)
-    {
-        printf("%d\n",rightNotch);
-        printf("%d\n",leftNotch);
-
-        if(rightNotch == 8)
-        {
-            stopRight();
-            rightNotch = 0;
-        }
-        if(leftNotch == 9)
-        {
-            stopLeft();
-            leftNotch = 0;
-        }
-    }
-    isCarForward = 0;
+    isCarForward = 2;
 
 }
 
@@ -122,20 +118,7 @@ void turnLeft180()
     gpio_put(7, 0);
     gpio_put(10, 1);    
     gpio_put(11, 0);
-    while(1)
-    {
-        if(rightNotch == 18)
-        {
-            stopRight();
-            rightNotch = 0;
-        }
-        if(leftNotch == 20)
-        {
-            stopLeft();
-            leftNotch = 0;
-        }
-    }
-    isCarForward = 0;
+    isCarForward = 4;
 
 }
 void turnRight90()
@@ -144,20 +127,7 @@ void turnRight90()
     gpio_put(7, 1);
     gpio_put(10, 0);    
     gpio_put(11, 1);
-    while(1)
-    {
-        if(rightNotch == 8)
-        {
-            stopRight();
-            rightNotch = 0;
-        }
-        if(leftNotch == 9)
-        {
-            stopLeft();
-            leftNotch = 0;
-        }
-    }
-    isCarForward = 0;
+    isCarForward = 4;
 
 }
 
@@ -167,20 +137,7 @@ void reverseCar()
     gpio_put(7, 1);
     gpio_put(10, 1);    
     gpio_put(11, 0);
-
-    while(1)
-    {
-        if(rightNotch >=8 && leftNotch >=8)
-         {
-             stopRight();
-             stopLeft();
-             rightNotch = 0;
-             leftNotch = 0;
-             turnLeft180();
-         }
-    }
-
-    isCarForward = 0;
+    isCarForward = 5;
 }
 
 void slightTurnLeft()
@@ -189,15 +146,7 @@ void slightTurnLeft()
     gpio_put(7, 0);
     gpio_put(10, 0);    
     gpio_put(11, 0);
-
-    while(1)
-    {
-        if(rightNotch == 2)
-        {
-            stopRight();
-            rightNotch = 0;
-        }
-    }
+    isCarForward = 6;
 }
 
 void slightTurnRight()
@@ -206,14 +155,8 @@ void slightTurnRight()
     gpio_put(7, 0);
     gpio_put(10, 0);    
     gpio_put(11, 1);
-    while(1)
-    {
-        if(leftNotch == 2)
-        {
-            stopLeft();
-            leftNotch = 0;
-        }
-    }
+    isCarForward = 7;
+  
 }
 
 void motorPID()

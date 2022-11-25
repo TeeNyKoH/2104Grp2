@@ -77,6 +77,82 @@ static void wheel_encoder(unsigned gpio, unsigned int _)
         done1 = 0;
         done2 = 0;
     }
+
+    // left state
+    if (isCarForward == 2)
+    {
+
+        if (rightNotch == 8)
+        {
+            stopRight();
+            rightNotch = 0;
+        }
+        if (leftNotch == 9)
+        {
+            stopLeft();
+            leftNotch = 0;
+        }
+    }
+    else if (isCarForward == 3)
+    {
+        if (rightNotch == 8)
+        {
+            stopRight();
+            rightNotch = 0;
+        }
+        if (leftNotch == 9)
+        {
+            stopLeft();
+            leftNotch = 0;
+        }
+    }
+
+    // left state 180
+    else if (isCarForward == 4)
+    {
+        if (rightNotch == 18)
+        {
+            stopRight();
+            rightNotch = 0;
+        }
+        if (leftNotch == 20)
+        {
+            stopLeft();
+            leftNotch = 0;
+        }
+    }
+
+    else if (isCarForward == 5)
+    {
+        if (rightNotch >= 8 && leftNotch >= 8)
+        {
+            stopRight();
+            stopLeft();
+            rightNotch = 0;
+            leftNotch = 0;
+            turnLeft180();
+        }
+    }
+
+    else if (isCarForward == 6)
+    {
+        if (rightNotch == 2)
+        {
+            stopRight();
+            rightNotch = 0;
+        }
+    }
+
+    else if (isCarForward == 7)
+    {
+
+        if (leftNotch == 2)
+        {
+            stopLeft();
+            leftNotch = 0;
+        }
+    }
+
     irq_clear(PIO0_IRQ_0);
 }
 
@@ -90,46 +166,54 @@ bool repeating_timer_callback(struct repeating_timer *t)
 bool perpetual_move(struct repeating_timer *t)
 {
     // setting profiles to move car
-    // if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 0 ){
-    //     moveCarForward(13,12,11);
-
+    // if (is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 0)
+    // {
+    //     // moveCarForward(13,12,11);
+    //     forwardCar();
     // }
 
-    // else if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 0 ){
-    //     turnLeft90(13,12,11);
-
+    // else if (is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 0)
+    // {
+    //     // turnLeft90(13,12,11);
+    //     turnLeft90();
     // }
 
-    // else if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 0 ){
-    //     turnRight90(13,12,11);
-
+    // else if (is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 0)
+    // {
+    //     // turnRight90(13,12,11);
+    //     turnRight90();
     // }
 
-    // else if(is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 1 ){
-    //     turnLeft90(13,12,11);
-
+    // else if (is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 1)
+    // {
+    //     // turnLeft90(13,12,11);
+    //     turnLeft90();
     // }
 
-    // else if(is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 1 ){
-    //     reverseCar(13,12,11);
+    // else if (is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 1)
+    // {
+    //     // reverseCar(13,12,11);
     //     // turnLeft90(13,12,11);
     //     // turnLeft90(13,12,11);
-
+    //     reverseCar();
     // }
 
-    // else if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 0 ){
-    //     moveCarForward(13,12,11);
-
+    // else if (is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 0)
+    // {
+    //     // moveCarForward(13,12,11);
+    //     forwardCar();
     // }
 
-    // else if(is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 1 ){
-    //     moveCarForward(13,12,11);
-
+    // else if (is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 1)
+    // {
+    //     // moveCarForward(13,12,11);
+    //     forwardCar();
     // }
 
-    // else if(is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 1 ){
-    //     moveCarForward(13,12,11);
-
+    // else if (is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 1)
+    // {
+    //     // moveCarForward(13,12,11);
+    //     forwardCar();
     // }
 
     // if (is_front_block() == 0)
@@ -137,8 +221,16 @@ bool perpetual_move(struct repeating_timer *t)
     //     moveCarForward(13,12,11);
     // }
     // else{
-    //     stopCar(13,12,11);`  ``
+    //     stopCar(13,12,11);
     // }
+
+    if(is_front_block() == 0){
+        forwardCar();
+    }
+
+    else {
+        stopCar();
+    }
 
     // forwardCar();
     return true;
@@ -146,12 +238,12 @@ bool perpetual_move(struct repeating_timer *t)
 
 bool motor_pid(struct repeating_timer *t)
 {
-
-    if (isCarForward)
-    {
-        printf("car state = forward\n");
-        motorPID();
-    }
+    printf("%d\n",isCarForward);
+    // if (isCarForward)
+    // {
+    //     printf("car state = forward\n");
+    //     motorPID();
+    // }
     return true;
 }
 
@@ -178,7 +270,7 @@ int main()
     gpio_set_irq_enabled(14, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
 
     initializeMotor();
-    turnLeft90();
+    // turnLeft90();
 
     // barcode
     adc_init();
@@ -220,8 +312,8 @@ int main()
     getAcelloDectection();
 
     add_repeating_timer_ms(200, repeating_timer_callback, NULL, &timer);
-    add_repeating_timer_ms(1000, perpetual_move, NULL, &timer1);
-    add_repeating_timer_ms(250, motor_pid, NULL, &timer2);
+    add_repeating_timer_ms(200, perpetual_move, NULL, &timer1);
+    // add_repeating_timer_ms(250, motor_pid, NULL, &timer2);
 
     while (1)
     {
