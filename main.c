@@ -271,6 +271,15 @@ int main()
 
     initializeMotor();
     // turnLeft90();
+    
+    // comms
+    //UART uses pins GP16 and GP17, speed 115200 bps (standard max)
+    uart_init(UART_INSTANCE, UART_SPEED);
+    //8 data bits, 1 stop bit, 0 parity bits
+    uart_set_format(UART_INSTANCE, DATA_BIT, STOP_BIT, PARITY_BIT);
+    uart_set_fifo_enabled(UART_INSTANCE, true);
+    gpio_set_function(UART_TX, GPIO_FUNC_UART);
+    gpio_set_function(UART_RX, GPIO_FUNC_UART);
 
     // barcode
     adc_init();
