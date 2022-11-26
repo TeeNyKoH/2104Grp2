@@ -30,7 +30,7 @@
 static int addr = 0x68;
 
 double accelo_Diff_X = 0, accelo_Diff_Y = 0, accelo_Height = 0, accelo_new_Diff = 0, accelo_Diff = 0, accelo_Avg_Diff = 0, accelo_All_Height_Average = 0, accelo_Total_All_Height_Average = 0;
-double accelo_First_Var_X = 0, accelo_First_Var_Y = 0;
+double accelo_First_Var_X, accelo_First_Var_Y;
 int hump_Status = 0;
 int count = 0;
 
@@ -94,15 +94,13 @@ float getAcelloDectection()
     mpu6050_reset();
     mpu6050_read_raw(acceleration, gyro, &temp);
     busy_wait_ms(3000);
-    accelo_First_Var_X = accelo_First_Var_X + acceleration[0];
-    accelo_First_Var_Y = accelo_First_Var_Y + acceleration[1];
-    
+    accelo_First_Var_X = acceleration[0];
+    accelo_First_Var_Y = acceleration[1];
 }
 
 /* Setup to calculate humps */
-float getHump()  
+float getHump()
 {
-    
     int16_t acceleration[3], gyro[3], temp;
     mpu6050_read_raw(acceleration, gyro, &temp);
     accelo_Diff_X = accelo_First_Var_X - acceleration[0];
@@ -112,7 +110,7 @@ float getHump()
     accelo_Height = accelo_Avg_Diff / 1095.545;
 
     /* Filtering away all negative values */
-    if (accelo_Height < 0){           
+    if (accelo_Height < 0) {           
         accelo_Height = 0;
     }
     // printf("HEIGHT = %f\n", accelo_Height , "cm");
@@ -135,7 +133,7 @@ float getHump()
     }
     else
     {
-        /* Resetting all variables to 0 for next hump detection*/
+        /* Resetting all variables to 0 for next hump detection */
         accelo_Total_All_Height_Average = 0;
         count = 0;
         accelo_All_Height_Average = 0;

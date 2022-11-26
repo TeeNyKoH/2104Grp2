@@ -26,13 +26,11 @@
 */
 
 float ultrasonic_Front = 0, ultrasonic_Avg_Front = 0, ultrasonic_Avg_Left = 0, ultrasonic_Avg_Right = 0, ultrasonic_Left = 0, ultrasonic_Right = 0;
-int j = 0;
-
 int left_block = 0, front_block = 0, right_block = 0, centerCar = 0, HumpStatus = 0;
 
-float front_offset = 0.5;
-float left_offset = -1;
-float right_offset = 0.3;
+float front_offset = 3.0;
+float left_offset = 3.1;
+float right_offset = 2.5;
 
 /* Set up for ultrasonic Pins */
 void setupUltrasonicPins(int trigPin, int echoPin)
@@ -104,7 +102,6 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
         ultrasonic_Avg_Right = ultrasonic_Right + ultrasonic_Avg_Right;
         // printf("%.2dcount\n",j);
     }
-    j = 0;
 
     /* Hardcoded addition as sensors give a set wrong value */
     ultrasonic_Avg_Front = (ultrasonic_Avg_Front / 50) + front_offset;
@@ -120,8 +117,10 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
     printf("%.2f cm right avg\n", ultrasonic_Avg_Right);
 
     // /* Variables to be given to mapping */
+
     // setting  front left and right to check if blocked
-    if (ultrasonic_Avg_Front < 20 + front_offset && ultrasonic_Avg_Front != front_offset)
+
+    if (ultrasonic_Avg_Front < 5.5 && ultrasonic_Avg_Front != 0)
     {
         front_block = 1;
     }
@@ -130,7 +129,7 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
         front_block = 0;
     }
 
-    if (ultrasonic_Avg_Left < 5.5 + left_offset && ultrasonic_Avg_Left != left_offset)
+    if (ultrasonic_Avg_Left < 5.5 && ultrasonic_Avg_Left != 0)
     {
         left_block = 1;
     }
@@ -139,22 +138,13 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
         left_block = 0;
     }
 
-    if (ultrasonic_Avg_Right < 5.5 + right_offset && ultrasonic_Avg_Right != right_offset)
+    if (ultrasonic_Avg_Right < 5.5 && ultrasonic_Avg_Right != 0)
     {
         right_block = 1;
     }
     else
     {
         right_block = 0;
-    }
-
-    if (ultrasonic_Avg_Front < 5.5 + front_offset && ultrasonic_Avg_Front != front_offset)
-    {
-        front_block = 1;
-    }
-    else
-    {
-        front_block = 0;
     }
 
     if (ultrasonic_Avg_Left > ultrasonic_Avg_Right)

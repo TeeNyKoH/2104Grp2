@@ -165,74 +165,28 @@ bool repeating_timer_callback(struct repeating_timer *t)
 
 bool perpetual_move(struct repeating_timer *t)
 {
-    // setting profiles to move car
-    // if (is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 0)
-    // {
-    //     // moveCarForward(13,12,11);
-    //     forwardCar();
-    // }
-
-    // else if (is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 0)
-    // {
-    //     // turnLeft90(13,12,11);
-    //     turnLeft90();
-    // }
-
-    // else if (is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 0)
-    // {
-    //     // turnRight90(13,12,11);
-    //     turnRight90();
-    // }
-
-    // else if (is_front_block() == 1 && is_left_block() == 0 && is_right_block() == 1)
-    // {
-    //     // turnLeft90(13,12,11);
-    //     turnLeft90();
-    // }
-
-    // else if (is_front_block() == 1 && is_left_block() == 1 && is_right_block() == 1)
-    // {
-    //     // reverseCar(13,12,11);
-    //     // turnLeft90(13,12,11);
-    //     // turnLeft90(13,12,11);
-    //     reverseCar();
-    // }
-
-    // else if (is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 0)
-    // {
-    //     // moveCarForward(13,12,11);
-    //     forwardCar();
-    // }
-
-    // else if (is_front_block() == 0 && is_left_block() == 0 && is_right_block() == 1)
-    // {
-    //     // moveCarForward(13,12,11);
-    //     forwardCar();
-    // }
-
-    // else if (is_front_block() == 0 && is_left_block() == 1 && is_right_block() == 1)
-    // {
-    //     // moveCarForward(13,12,11);
-    //     forwardCar();
-    // }
-
-    // if (is_front_block() == 0)
-    // {
-    //     moveCarForward(13,12,11);
-    // }
-    // else{
-    //     stopCar(13,12,11);
-    // }
-
-    if(is_front_block() == 0){
+    if(is_front_block() == 0)
+    {
         forwardCar();
     }
-
-    else {
-        stopCar();
+    else
+    {
+        if(is_left_block() == 0)
+        {
+           turnLeft90();
+        }
+        else
+        {
+            if(is_right_block() == 0)
+            {
+                turnRight90();
+            }
+            else
+            {
+                reverseCar();
+            }
+        }
     }
-
-    // forwardCar();
     return true;
 }
 
@@ -301,7 +255,6 @@ int main()
 #warning i2c/mpu6050_i2c example requires a board with I2C pins
     puts("Default I2C pins were not defined");
 #else
-    sleep_ms(1000);
     setupUltrasonicPins(trigPin, echoPin1); // front
     setupUltrasonicPins(trigPin, echoPin2); // left
     setupUltrasonicPins(trigPin, echoPin3); // right
