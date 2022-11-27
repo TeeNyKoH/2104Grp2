@@ -4,6 +4,7 @@
 #include "main.h"
 
 char buffer[BUFFER_SIZE];
+char receiveBuffer[BUFFER_SIZE];
 static int mqtt_printStatus = 0;
 char mqtt[MAX_LENGTH];
 static int mqtt_length = 0;
@@ -71,7 +72,7 @@ void receive(){
   static char ch;
   static int charCount = 0;
   
-  memset(buffer, '\0', BUFFER_SIZE);
+  memset(receiveBuffer, '\0', BUFFER_SIZE);
   
   // Check for message header 0x01 (Start of Header)
   ch = uart_getc(UART_INSTANCE);
@@ -83,16 +84,16 @@ void receive(){
     ch = uart_getc(UART_INSTANCE);
     // Check and continue if not 0x04 (End of Transmission)
     if(ch != EOT){
-      buffer[charCount] = ch;
+      receiveBuffer[charCount] = ch;
       charCount++;
     } 
   }
   
   if (charCount == 8){
-    if (strncmp(buffer, "GOTO", 4) == 0){
-      if(isdigit(buffer[5]) && isdigit(buffer[7])){
-        int x = buffer[5] - '0';
-        int y = buffer[7] - '0';
+    if (strncmp(receiveBuffer, "GOTO", 4) == 0){
+      if(isdigit(receiveBuffer[5]) && isdigit(receiveBuffer[7])){
+        int x = receiveBuffer[5] - '0';
+        int y = receiveBuffer[7] - '0';
         
         //Insert mapping goto here.
         uartprintf("COMMAND RECEIVED: GOTO %d %d\n", x, y);
