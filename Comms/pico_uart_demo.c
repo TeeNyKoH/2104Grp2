@@ -136,7 +136,7 @@ void receive(){
   while(uart_is_readable(UART_INSTANCE)){
     ch = uart_getc(UART_INSTANCE);
     // Check and continue if not 0x04 (End of Transmission)
-    if(ch != EOT){
+    if(ch != EOT && charCount < BUFFER_SIZE){
       receiveBuffer[charCount] = ch;
       charCount++;
     } 
