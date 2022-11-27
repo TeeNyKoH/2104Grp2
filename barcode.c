@@ -7,6 +7,7 @@
 #include "hardware/adc.h"
 #include "decode.h"
 #include "barcode.h"
+#include "communications.h"
 
 int result, totalResult, startTime, interruptCounter, avg, avgs, blackCounter, whiteCounter, interruptCounter, j, sum, currentTime, limitCheck, isBlack = 0;
 int whiteLimit = 400, blackLimit = 3300;
@@ -108,7 +109,10 @@ void get_barcode(int reading)
         tempOutput = decode_barcode(bars, spaces);
         // printf("tempoutput %s\n", tempOutput);
         strcat(barcodeOutput, tempOutput);
-        printf("%s\n", barcodeOutput);
+        //printf("%s\n", barcodeOutput);
+        for (int i = 0; i < 3; i++){
+          uartprintf("%c%c%c", barcodeOutput[0], barcodeOutput[1], barcodeOutput[2]);
+        }
 
         memset(bars, 0, 5);
         memset(spaces, 0, 4);

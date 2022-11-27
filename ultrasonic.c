@@ -11,6 +11,7 @@
 #include "hardware/irq.h"
 #include "ultrasonic.h"
 #include "movement.h"
+#include "communications.h"
 
 /**
  * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
@@ -112,9 +113,9 @@ float getUSDectection(int trigPin, int echoPin1, int echoPin2, int echoPin3)
     // printf("%.2f cm of left\n", getCm(trigPin, echoPin2));
     // printf("%.2f cm of right\n", getCm(trigPin, echoPin3));
 
-    printf("%.2f cm front avg\n", ultrasonic_Avg_Front);
-    printf("%.2f cm left avg\n", ultrasonic_Avg_Left);
-    printf("%.2f cm right avg\n", ultrasonic_Avg_Right);
+    uartprintf("%.2f cm front avg\n", ultrasonic_Avg_Front);
+    uartprintf("%.2f cm left avg\n", ultrasonic_Avg_Left);
+    uartprintf("%.2f cm right avg\n", ultrasonic_Avg_Right);
 
     // /* Variables to be given to mapping */
 

@@ -10,6 +10,7 @@
 #include <time.h>
 #include "hardware/irq.h"
 #include "accelorometer.h"
+#include "communications.h"
 
 /**
  * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
@@ -125,6 +126,8 @@ float getHump()
         /* Samples taken is at a minimum of 3 samples to go over a hump*/
         if (count >= 3)
         {
+            uartprintf("Hump Detected, oriheight = %f\n", accelo_Height , "cm" );
+            uartprintf("Hump Detected, avgheight = %f\n", accelo_Total_All_Height_Average , "cm" );
             // printf("Hump Detected, oriheight = %f\n", accelo_Height , "cm" );
             // hump_Status = 1;
             // printf("Hump Detected, avgheight = %f\n", accelo_Total_All_Height_Average , "cm" );

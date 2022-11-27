@@ -20,6 +20,7 @@
 #include "decode.h"
 #include "encoder.h"
 #include "motor.h"
+#include "communications.h"
 
 int trigPin = 0;
 int echoPin1 = 1;
@@ -226,6 +227,9 @@ int main()
     initializeMotor();
     // turnLeft90();
 
+    //Communications
+    initializeComms();
+    
     // barcode
     adc_init();
     // Make sure GPIO is high-impedance, no pullups etc
