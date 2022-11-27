@@ -31,8 +31,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
     uint8_t* msgReceived = (uint8_t *) malloc(callbackLength);
     memset(msgReceived, '\0', callbackLength);
     msgReceived[0] = 0x01;
-    for (int i = 1; i < (callbackLength - 2); i++){
-      msgReceived[i] = payload[i - 1];
+    for (int i = 0; i < (callbackLength - 2); i++){
+      msgReceived[i + 1] = payload[i];
     }
     //strncat(msgReceived, payload, (int)(callbackLength - 2));
     msgReceived[callbackLength - 1] = 0x04;
