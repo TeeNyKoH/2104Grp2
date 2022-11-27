@@ -38,7 +38,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     msgReceived[callbackLength - 1] = 0x04;
     Serial.write(msgReceived, callbackLength);
     M5.Lcd.printf("Message received!\n");
-	free(msgReceived);
+    free(msgReceived);
   }
 }
 
