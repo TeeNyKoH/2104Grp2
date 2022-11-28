@@ -11,7 +11,7 @@
 #define STOP_BIT 1
 #define PARITY_BIT (UART_PARITY_NONE)
 #define BUFFER_SIZE 128
-#define MAX_LENGTH 1024
+#define MQTT_MAX_LENGTH 1024
 #define EOT 0x04
 
 void uartprintf(const char* fmt, ...);
