@@ -20,7 +20,9 @@
 #include "decode.h"
 #include "encoder.h"
 #include "motor.h"
+#include "Mapping.h"
 #include "communications.h"
+
 
 int trigPin = 0;
 int echoPin1 = 1;

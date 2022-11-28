@@ -712,9 +712,9 @@ void dijkstra(Map *m, int G[MAX][MAX], int n, int startnode, int dest)
     // pred[] stores the predecessor of each node
     // count gives the number of nodes seen so far
     // create the cost matrix
-    for (i = 0; i < n; i++)
+    for (i = 0; i <= n; i++)
     {
-        for (j = 0; j < n; j++)
+        for (j = 0; j <= n; j++)
         {
             if (has_edge(m, i, j) == false)
             {
@@ -727,7 +727,7 @@ void dijkstra(Map *m, int G[MAX][MAX], int n, int startnode, int dest)
         }
     }
     // initialize pred[],distance[] and visited[]
-    for (i = 0; i < n; i++)
+    for (i = 0; i <= n; i++)
     {
         distance[i] = cost[startnode][i];
         pred[i] = startnode;
@@ -743,7 +743,7 @@ void dijkstra(Map *m, int G[MAX][MAX], int n, int startnode, int dest)
         mindistance = INFINITY;
 
         // nextnode gives the node at minimum distance
-        for (i = 0; i < n; i++)
+        for (i = 0; i <= n; i++)
             if (distance[i] < mindistance && !visited[i])
             {
                 mindistance = distance[i];
@@ -752,7 +752,7 @@ void dijkstra(Map *m, int G[MAX][MAX], int n, int startnode, int dest)
 
         // check if a better path exists through nextnode
         visited[nextnode] = 1;
-        for (i = 0; i < n; i++)
+        for (i = 0; i <= n; i++)
             if (!visited[i])
                 if (mindistance + cost[nextnode][i] < distance[i])
                 {
