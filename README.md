@@ -1,3 +1,7 @@
+Slides for Accelerometer & Ultrasonic, Motor, Barcode
+Slides Link: https://docs.google.com/presentation/d/1xdZ4QNaG5FnhUXg1UYhky4PtGvUBYRlFiL50JWpSi7A/edit?usp=sharing
+
+
 # 2104Grp2
 Robot Car
 
