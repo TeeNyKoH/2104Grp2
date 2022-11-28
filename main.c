@@ -276,6 +276,7 @@ int main()
 
     while (1)
     {
+        receive();
         // tight_loop_contents();
         sleep_ms(40);
     }
