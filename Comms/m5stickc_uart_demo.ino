@@ -61,9 +61,7 @@ void wifiSetup() {
 void reconnect() {
   while (!client.connected()) {
     M5.Lcd.println("Reconnecting...");
-    // Create a random client ID
-    String clientId = "ESP32Client-";
-    clientId += String(random(0xffff), HEX);
+    String clientId = "ESP32Client-01";
     // Attempt to connect
     if (client.connect(clientId.c_str())) {
       M5.Lcd.println("Reconnected.");

@@ -9,6 +9,9 @@ Khansa Zilfa Shofia Ghazali 2102820
 Files with "demo" are for demonstrating that UART and I2C works on Pico, M5StickC and ESP01.
 These files do not require the car.
 
+Files with "test" are for testing the latency and throughput of the UART/I2C protocols.
+These are used in conjunction with the Pi Pico Logic Analyzer.
+
 LatencyThroughput.xlsx contains the processed data from the Pi Pico Logic Analyzer.
 
 LatencyChart.png and ThroughputChart.png are the charts for data collected above.
