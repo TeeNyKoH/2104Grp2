@@ -38,8 +38,8 @@ int main(){
 
     //adding Humps
     add_hump(m1,2,3);
-    add_hump(m1,6,11);
-    add_hump(m1,17,18);
+    add_hump(m1,7,12);
+    add_hump(m1,18,19);
     add_hump(m1,10,15);
 
 
