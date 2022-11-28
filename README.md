@@ -8,3 +8,5 @@ Tennyson Koh(Logic) & Tan Chun Guan(Integration, Testing, Diagrams)
 To run Accelerometer & Ultrasonic Codes
 1. Build Ultrasonic.c 
 2. Flash Ultrasonic.UF2 File into pico
+
+Video Link: https://youtu.be/NzsqTfHTmAQ
