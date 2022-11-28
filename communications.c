@@ -89,6 +89,7 @@ void receive(){
     return;
   }
   
+  // Retrieves the messages until End of Transmission (EOT) is received
   while(uart_is_readable(UART_INSTANCE)){
     ch = uart_getc(UART_INSTANCE);
     // Check and continue if not 0x04 (End of Transmission)
@@ -98,13 +99,14 @@ void receive(){
     } 
   }
   
+  // Checking if the message received is a command
   if (charCount == 8){
     if (strncmp(receiveBuffer, "GOTO", 4) == 0){
       if(isdigit(receiveBuffer[5]) && isdigit(receiveBuffer[7])){
         int x = receiveBuffer[5] - '0';
         int y = receiveBuffer[7] - '0';
         
-        //Insert mapping goto here.
+        //Insert mapping command goto here.
         uartprintf("COMMAND RECEIVED: GOTO %d %d\n", x, y);
       }
     }      
