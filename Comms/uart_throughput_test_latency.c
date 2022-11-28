@@ -1,7 +1,3 @@
-/*
-This is the source code for UART latency testing on Pico
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
