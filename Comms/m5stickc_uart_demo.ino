@@ -20,7 +20,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if (strncmp(topic, recvTopic, 4) == 0) {
 
     // The pico only has a 32 byte RX buffer for UART. Restrict all messages to 30 bytes and less.
-    // Leave 1 byte for header and 1 byte for null terminator
+    // Leave 1 byte for header and 1 byte for EOT
     unsigned int callbackLength = 0;
     if (length < 31) {
       callbackLength = length + 2;
