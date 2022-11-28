@@ -8,7 +8,9 @@ const char* password    = "yr5vs7kgbeb5nnc";
 const char* mqtt_server = "192.168.137.1";
 const int port          = 1883;
 
+// Topic to subscribe to (and receive messages on)
 const char* recvTopic   = "send";
+// Topic to send messages to
 const char* picoTopic   = "car";
 
 uint8_t mqttBuffer[MQTT_MAX_LENGTH];   // an array to store the received data
@@ -16,6 +18,7 @@ uint8_t mqttBuffer[MQTT_MAX_LENGTH];   // an array to store the received data
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+// Callback happens when M5StickC finds a message sent to the "send" topic
 void callback(char* topic, byte* payload, unsigned int length) {
   if (strncmp(topic, recvTopic, 4) == 0) {
 
@@ -30,11 +33,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
     uint8_t* msgReceived = (uint8_t *) malloc(callbackLength);
     memset(msgReceived, '\0', callbackLength);
+    // Attach 0x01 (Start of Header) as header
     msgReceived[0] = 0x01;
     for (int i = 0; i < (callbackLength - 2); i++){
       msgReceived[i + 1] = payload[i];
     }
     //strncat(msgReceived, payload, (int)(callbackLength - 2));
+    // Attach 0x04 (End of Transmission)
     msgReceived[callbackLength - 1] = 0x04;
     Serial.write(msgReceived, callbackLength);
     M5.Lcd.printf("Message received!\n");
@@ -118,8 +123,8 @@ void setup() {
   client.setServer(mqtt_server, port);
   client.setCallback(callback);
   
-  //Initialize UART for analysis
   //No parity, 1 stop bit
+  // Baud rate, serial type, Rx pin, Tx pin
   Serial.begin(115200, SERIAL_8N1, 32, 33);
   M5.Lcd.println("Setup complete!");
 }
