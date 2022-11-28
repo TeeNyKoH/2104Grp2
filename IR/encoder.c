@@ -35,18 +35,18 @@ static void wheel_encoder(unsigned gpio, long unsigned int _)
 {
     if (gpio == 17)
     {
-        wheelRotation1++; // right wheel
-        wheelDistance1 = wheelRotation1 * 0.33 * PI;
+        wheelRotation1++;                               // right wheel
+        wheelDistance1 = wheelRotation1 * 0.165 * PI;
     }
     if (gpio == 14)
     {
-        wheelRotation2++;                            // left wheel
-        wheelDistance2 = wheelRotation2 * 0.33 * PI; // d = 6.6cm, distance = notches * 6.6pi / 20
+        wheelRotation2++;                               // left wheel
+        wheelDistance2 = wheelRotation2 * 0.165 * PI;   // d = 6.6cm, distance = notches * 6.6pi / 40
     }
 
     if (wheelRotation1 == 1 && wheelRotation2 == 1)
     {
-        startTime = time_us_32(); // start timer once wheel start moving
+        startTime = time_us_32();                       // start timer once wheel start moving
     }
 
     totalDistance = ((wheelDistance2 + wheelDistance1) / 2.0);
@@ -81,7 +81,6 @@ bool get_current_speed(struct repeating_timer *t)
     }
     // get distance every 1 s
     // printf("speed every 1s %.2f\n", currentDistance);
-
     return true;
 }
 
@@ -92,7 +91,6 @@ void init_encoder(){
     gpio_set_irq_enabled(14, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true);
 
     struct repeating_timer timer;
-    struct repeating_timer timer1;
 
     add_repeating_timer_ms(1000, get_current_speed, NULL, &timer);
 
