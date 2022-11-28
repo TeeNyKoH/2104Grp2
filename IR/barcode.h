@@ -10,7 +10,6 @@ extern int blackOffset, whiteOffset;
 
 extern float weight, EMWF, previousReading;
 
-
 int black[7];
 int white[6];
 
@@ -25,6 +24,5 @@ void barcode_interrupt();
 void barcode_interrupt_moving_average();
 void barcode_interrupt_exponential_weighted_filter();
 void barcode_interrupt_raw();
-
 
 #endif

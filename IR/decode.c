@@ -3,21 +3,21 @@
 #include <string.h>
 #include "decode.h"
 
-char Arr_Characters[NUMBER_OF_STRING][MAX_STRING_SIZE] = {
+char decodeCharacters[NUMBER_OF_STRING][MAX_STRING_SIZE] = {
     "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "E",
     "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
     "U", "V", "W", "X", "Y", "Z", "-", ".", "_", "*", "$", "/", "+", "%"};
 
-char Arr_Spaces[NUMBER_OF_STRING][MAX_STRING_SIZE] = {"0100", "0010", "0001",
+char decodeSpaces[NUMBER_OF_STRING][MAX_STRING_SIZE] = {"0100", "0010", "0001",
                                                       "1000"};
 
-char Arr_Bars[NUMBER_OF_STRING][MAX_STRING_SIZE] = {
+char decodeBars[NUMBER_OF_STRING][MAX_STRING_SIZE] = {
     "10001", "01001", "11000", "00101", "10100", "01100",
     "00011", "10010", "01010", "00110", "00000"};
 
 char output[5];
 
-int counter, barcounter, spacecounter,value1,value2,value3,finalvalue = 0;
+int counter, barCounter, spaceCounter, value1, value2, value3, finalValue = 0;
 
 // Comparing both the strings.
 int compare(char a[], char b[])
@@ -61,37 +61,37 @@ int concat(int a, int b)
 
 char* decode_barcode(char bars[], char spaces[])
 {
-    // for (int i = 0; i < strlen(Arr_Bars); i++)
-    for (int i = 0; i < 5; i++)
+    // for (int i = 0; i < strlen(decodeBars); i++)
+    for (int i = 0; i < 11; i++)
     {
 
         /* count number */
         counter++;
 
         /* compare string value, calling compare() function  */
-        int c = compare(Arr_Bars[i], bars);
+        int c = compare(decodeBars[i], bars);
         if (c == 0)
         {
             // if string is same
-            barcounter = counter;
+            barCounter = counter;
         }
     }
 
     /* reset counter*/
     counter = 0;
 
-    if (barcounter != 11)
+    if (barCounter != 11)
     {
-        // for (int i = 0; i < strlen(Arr_Spaces); i++)
+        // for (int i = 0; i < strlen(decodeSpaces); i++)
         for (int i = 0; i < 4; i++)
         {
 
             counter++;
 
-            int c = compare(Arr_Spaces[i],  spaces);
+            int c = compare(decodeSpaces[i],  spaces);
             if (c == 0)
             {
-                spacecounter = counter;
+                spaceCounter = counter;
             }
         }
 
@@ -105,10 +105,10 @@ char* decode_barcode(char bars[], char spaces[])
 
             counter++;
 
-            int c = compare(Arr_Bars[i], bars);
+            int c = compare(decodeBars[i], bars);
             if (c == 0)
             {
-                barcounter = counter;
+                barCounter = counter;
             }
         }
 
@@ -118,22 +118,21 @@ char* decode_barcode(char bars[], char spaces[])
         // ----- working for calculations -----------------
 
         // math
-        if (barcounter == 10)
+        if (barCounter == 10)
         {
-            value1 = barcounter * spacecounter;
-            finalvalue = value1 - 1;
+            value1 = barCounter * spaceCounter;
+            finalValue = value1 - 1;
         }
         else
         {
-            value1 = spacecounter - 1;
-            value2 = barcounter;
+            value1 = spaceCounter - 1;
+            value2 = barCounter;
             value3 = concat(value1, value2);
-            finalvalue = value3 - 1;
+            finalValue = value3 - 1;
         }
     }
 
     // get array item
-    // printf("Character Value = %s\n", Arr_Characters[finalvalue]);
-    // strcat(output, Arr_Characters[finalvalue]);
-    return Arr_Characters[finalvalue];
+    printf("Character Value = %s\n", decodeCharacters[finalValue]);
+    return decodeCharacters[finalValue];
 }

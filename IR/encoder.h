@@ -12,6 +12,4 @@ double avgSpeed, totalDistance, tempDistance, currentDistance;
 
 double get_total_distance();
 double get_average_speed();
-static void wheel_encoder(unsigned int,long unsigned int);
-void init_encoder();
 #endif

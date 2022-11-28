@@ -17,8 +17,8 @@ if __name__ == "__main__":
         emwfData.append(emwf)
         previousReading = emwf
 
-    # low pass filter 
-    cutoff = 2
+    # butterworth low pass filter 
+    cutoff = 100
     nyq = 0.5 * len(data)
     normal = cutoff / nyq
 

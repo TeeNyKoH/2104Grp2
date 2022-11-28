@@ -97,7 +97,7 @@ void get_barcode(int reading)
 
         if (strlen(barcodeOutput) == 3)
         {
-            // printf("barcode value = %s\n", barcodeOutput);
+            printf("barcode value = %s\n", barcodeOutput);
             resetAllVariables();
         }
 
@@ -121,7 +121,7 @@ void barcode_interrupt_moving_average()
 
         // printf("%d\n",result);
 
-        if (interruptCounter == 200)
+        if (interruptCounter == 100)
         {
             // start timer once first value is read
             if (startTime == 0)
@@ -129,7 +129,7 @@ void barcode_interrupt_moving_average()
                 startTime = time_us_32();
             }
 
-            resultAverage = totalResult / 200;
+            resultAverage = totalResult / 100;
             // printf("%d\n",resultAverage);
             get_barcode(resultAverage);
 
@@ -156,14 +156,14 @@ void barcode_interrupt_exponential_weighted_filter()
         totalResult += result;
         interruptCounter++;
 
-        if (interruptCounter >= 1000)
+        if (interruptCounter >= 100)
         {
-            test = totalResult / 1000;
-            EMWF = (1 - weight) * previousReading + weight * test;
+            resultAverage = totalResult / 100;
+            EMWF = (1 - weight) * previousReading + weight * resultAverage;
             get_barcode(EMWF);
             previousReading = EMWF;
 
-            printf("%.2f\n", EMWF);
+            // printf("%.2f\n", EMWF);
             totalResult = 0;
             interruptCounter = 0;
         }
@@ -192,9 +192,9 @@ void barcode_interrupt_raw()
         totalResult += result;
         interruptCounter++;
 
-        if (interruptCounter >= 1000)
+        if (interruptCounter >= 100)
         {
-            resultAverage = totalResult / 1000;
+            resultAverage = totalResult / 100;
             get_barcode(resultAverage);
 
             printf("%d\n", resultAverage);
