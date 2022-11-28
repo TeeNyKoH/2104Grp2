@@ -18,3 +18,12 @@ To run Accelerometer & Ultrasonic Codes
 2. Flash Ultrasonic.UF2 File into pico
 
 Video Link: https://youtu.be/NzsqTfHTmAQ
+
+-
+IR & Encoder Codes Done By:
+Michael Chandiary(Logic, Testing, Integration) & Gan Jia Xin(Integration, Testing, Diagrams) & Tan Ai Xin(Diagrams, Testing)
+To run IR & Encoder Codes
+1. Build main.c 
+2. Flash sensor.UF2 File into pico
+
+Video Link: https://youtu.be/KjQtN3TZ5xo
