@@ -1,7 +1,7 @@
 # 2104Grp2
 Robot Car
 
-
+Do check the Comms folder for submission!
 
 Accelerometer & Ultrasonic Codes Done By:
 Tennyson Koh(Logic) & Tan Chun Guan(Integration, Testing, Diagrams)
