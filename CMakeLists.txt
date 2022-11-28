@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
     accelorometer.c
     movement.c
     motor.c
+    communications.c
 )
 
 # Create map/bin/hex/uf2 files
