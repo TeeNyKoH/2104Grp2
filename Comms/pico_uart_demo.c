@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <ctype.h>
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 #define UART_INSTANCE (uart0)
