@@ -1,11 +1,3 @@
-/*
-This is the source code for the car integration for Raspberry Pi Pico
-
-Issues:
-Due to a problem with the Raspberry Pi Pico SDK, the UART cannot be changed from 8N1 (8 bits of data, no parity bit, 1 stop bit)
-https://github.com/raspberrypi/pico-sdk/issues/548
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
